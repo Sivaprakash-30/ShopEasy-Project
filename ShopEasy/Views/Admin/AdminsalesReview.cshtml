@@ -1,0 +1,82 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Admin Sales Review";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Sales Review</h2>
+            <p class="text-muted mb-0">Company-owned product sales overview</p>
+        </div>
+       
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">Product Sales</h5>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Product</th>
+                            <th>Product Name</th>
+                            <th>Unit Price</th>
+                            <th>Quantity Sold</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int count = 1;
+                        }
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@count</td>
+                                <td>
+                                    @if (item.Image != null)
+                                    {
+                                        var imageName = item.Image.ToString()
+                                        .Split(',')[0].Trim();
+
+                                        <img src="@Url.Content("~/Products/" + imageName)"
+                                             alt="@item.productname"
+                                             style="width:65px;height:65px;object-fit:cover;border-radius:8px;" />
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No image</span>
+                                    }
+                                </td>
+                                <td class="fw-semibold">@item.productname</td>
+                                <td>₹@item.Price</td>
+                                <td>
+                                    <span class="badge bg-success-subtle text-success px-3 py-2">
+                                        @item.Quantity
+                                    </span>
+                                </td>
+                            </tr>
+
+                            count++;
+                        }
+
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    No company-owned product sales found.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

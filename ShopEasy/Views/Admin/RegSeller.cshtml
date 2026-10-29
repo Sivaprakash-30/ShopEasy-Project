@@ -1,0 +1,443 @@
+
+@model IEnumerable<ShopEasy.Models.SellerReg>
+
+@{
+    ViewData["Title"] = "Registered Sellers";
+}
+
+<style>
+    .seller-page {
+        padding: 10px 5px;
+        color: #263248;
+    }
+
+    .seller-header {
+        margin-bottom: 25px;
+    }
+
+        .seller-header h2 {
+            font-size: 25px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .seller-header p {
+            color: #7b8495;
+            margin: 6px 0 0;
+            font-size: 14px;
+        }
+
+    .seller-summary {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 3px 12px rgba(35, 50, 80, 0.04);
+    }
+
+    .summary-icon {
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #e9f2ff;
+        color: #2864c5;
+        border-radius: 12px;
+        font-size: 25px;
+    }
+
+    .summary-label {
+        color: #778197;
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+
+    .summary-count {
+        font-size: 25px;
+        font-weight: 700;
+    }
+
+    .seller-card {
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 3px 12px rgba(35, 50, 80, 0.04);
+    }
+
+    .seller-card-header {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 15px;
+        border-bottom: 1px solid #edf0f5;
+    }
+
+        .seller-card-header h5 {
+            font-size: 17px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+    .seller-search {
+        width: 300px;
+        max-width: 100%;
+        position: relative;
+    }
+
+        .seller-search input {
+            width: 100%;
+            border: 1px solid #dfe5ee;
+            border-radius: 8px;
+            padding: 10px 14px 10px 38px;
+            outline: none;
+            font-size: 13px;
+        }
+
+            .seller-search input:focus {
+                border-color: #3978d4;
+                box-shadow: 0 0 0 3px rgba(57, 120, 212, 0.1);
+            }
+
+    .search-icon {
+        position: absolute;
+        left: 13px;
+        top: 10px;
+        color: #8993a5;
+    }
+
+    .seller-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+    }
+
+        .seller-table thead th {
+            background: #f8faff;
+            color: #727e93;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            padding: 16px 18px;
+            border-bottom: 1px solid #e9edf4;
+            white-space: nowrap;
+        }
+
+        .seller-table tbody td {
+            padding: 16px 18px;
+            border-bottom: 1px solid #edf0f5;
+            vertical-align: middle;
+            font-size: 13px;
+        }
+
+        .seller-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .seller-table tbody tr:hover {
+            background: #f9fbff;
+        }
+
+    .seller-id {
+        color: #7c8799;
+        font-weight: 600;
+    }
+
+    .seller-profile {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 150px;
+    }
+
+    .seller-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e9f2ff;
+        color: #2864c5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .seller-name {
+        color: #27354b;
+        font-weight: 600;
+    }
+
+    .company-name {
+        color: #27354b;
+        font-weight: 600;
+        min-width: 130px;
+    }
+
+    .license-number {
+        color: #66748b;
+        font-family: monospace;
+        font-size: 12px;
+    }
+
+    .seller-email {
+        color: #58677e;
+        overflow-wrap: anywhere;
+    }
+
+    .contact-number {
+        white-space: nowrap;
+        color: #58677e;
+    }
+
+    .registered-badge {
+        display: inline-block;
+        background: #e8f7ef;
+        color: #218653;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .seller-footer {
+        padding: 15px 20px;
+        border-top: 1px solid #edf0f5;
+        color: #7b8495;
+        font-size: 12px;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 15px !important;
+        color: #7b8495;
+    }
+
+    .empty-icon {
+        display: block;
+        font-size: 35px;
+        margin-bottom: 10px;
+    }
+
+    @@media (max-width: 767px) {
+        .seller-header h2 {
+            font-size: 21px;
+        }
+
+        .seller-card-header {
+            align-items: stretch;
+        }
+
+        .seller-search {
+            width: 100%;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .seller-table thead th,
+        .seller-table tbody td {
+            padding: 13px;
+        }
+    }
+</style>
+
+<div class="seller-page">
+
+    <!-- Page heading -->
+    <div class="seller-header">
+        <h2>Registered Sellers</h2>
+        <p>View seller profiles and business registration details.</p>
+    </div>
+
+    <!-- Seller count -->
+    <div class="seller-summary">
+        <div class="summary-icon">
+            <i class="mdi mdi-store"></i>
+        </div>
+
+        <div>
+            <div class="summary-label">Total Registered Sellers</div>
+            <div class="summary-count">
+                @(Model?.Count() ?? 0)
+            </div>
+        </div>
+    </div>
+
+    <!-- Registered sellers table -->
+    <div class="seller-card">
+
+        <div class="seller-card-header">
+            <h5>Seller Directory</h5>
+
+            <div class="seller-search">
+                <i class="mdi mdi-magnify search-icon"></i>
+
+                <input type="text"
+                       id="sellerSearch"
+                       placeholder="Search company, seller, email..."
+                       aria-label="Search registered sellers" />
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="seller-table">
+
+                <thead>
+                    <tr>
+                        <th>Seller ID</th>
+                        <th>Company</th>
+                        <th>License Number</th>
+                        <th>Seller Name</th>
+                        <th>Email Address</th>
+                        <th>Contact</th>
+                        <th>Registration</th>
+                    </tr>
+                </thead>
+
+                <tbody id="sellerTableBody">
+
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr class="seller-row">
+
+                                <td class="seller-id">
+                                    #@item.SId
+                                </td>
+
+                                <td>
+                                    <div class="company-name">
+                                        @(string.IsNullOrWhiteSpace(item.CompanyName)
+                                                                        ? "Not provided"
+                                                                        : item.CompanyName)
+                                                                                       </div>
+                                                                                   </td>
+
+                                <td class="license-number">
+                                    @(string.IsNullOrWhiteSpace(item.SellerLiscenceNo)
+                                                                ? "Not provided"
+                                                                : item.SellerLiscenceNo)
+                                                                                    </td>
+
+                                <td>
+                                    <div class="seller-profile">
+                                        <div class="seller-avatar">
+                                            @(string.IsNullOrWhiteSpace(item.SellerName)
+                                                                                ? "?"
+                                                                                : item.SellerName.Substring(0, 1).ToUpper())
+                                                                                                                        </div>
+
+                                        <span class="seller-name">
+                                            @(string.IsNullOrWhiteSpace(item.SellerName)
+                                                                                ? "Unknown Seller"
+                                                                                : item.SellerName)
+                                                                                              </span>
+                                                                                          </div>
+                                                                                      </td>
+
+                                <td class="seller-email">
+                                    @item.Email
+                                </td>
+
+                                <td class="contact-number">
+                                    @(string.IsNullOrWhiteSpace(item.Contact)
+                                                                ? "Not provided"
+                                                                : item.Contact)
+                        </td>
+
+                                <td>
+                                    <span class="registered-badge">
+                                        Registered
+                                    </span>
+                                </td>
+
+                            </tr>
+                                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <i class="mdi mdi-store-off-outline empty-icon"></i>
+                                <strong>No registered sellers found</strong>
+                                <div>Seller registration records will appear here.</div>
+                            </td>
+                        </tr>
+                    }
+
+                    <tr id="noSearchResults" style="display:none;">
+                        <td colspan="7" class="empty-state">
+                            <i class="mdi mdi-magnify empty-icon"></i>
+                            No matching sellers found.
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="seller-footer">
+            <span id="sellerCount">
+                Showing @(Model?.Count() ?? 0) sellers
+            </span>
+
+            <span>ShopEasy Admin Panel</span>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const searchInput = document.getElementById("sellerSearch");
+        const rows = Array.from(
+            document.querySelectorAll(".seller-row")
+        );
+
+        const countLabel = document.getElementById("sellerCount");
+        const noResults = document.getElementById("noSearchResults");
+
+        searchInput.addEventListener("input", function () {
+
+            const searchText = this.value.trim().toLowerCase();
+            let visibleCount = 0;
+
+            rows.forEach(function (row) {
+
+                const matches = row.textContent
+                    .toLowerCase()
+                    .includes(searchText);
+
+                row.style.display = matches ? "" : "none";
+
+                if (matches) {
+                    visibleCount++;
+                }
+            });
+
+            noResults.style.display =
+                visibleCount === 0 && rows.length > 0 ? "" : "none";
+
+            countLabel.textContent =
+                "Showing " + visibleCount + " of " +
+                rows.length + " sellers";
+        });
+    });
+</script>

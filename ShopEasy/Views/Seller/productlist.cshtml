@@ -1,0 +1,274 @@
+﻿
+@model IEnumerable<ShopEasy.Models.ProductType>
+
+<style>
+    body {
+        background: #f5f7fb;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #263449;
+    }
+
+    .products-page {
+        padding: 30px;
+        min-height: 100vh;
+    }
+
+    /* Page heading and category filter */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .page-title h2 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1e3558;
+        margin: 0 0 8px;
+    }
+
+    .page-title p {
+        color: #7b8799;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .filter-form {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .category-select {
+        min-width: 220px;
+        padding: 12px 14px;
+        border: 1px solid #d9e1ec;
+        border-radius: 8px;
+        background: #fff;
+        color: #34445c;
+        font-size: 14px;
+        outline: none;
+        cursor: pointer;
+    }
+
+        .category-select:focus {
+            border-color: #3976db;
+            box-shadow: 0 0 0 3px rgba(57, 118, 219, 0.12);
+        }
+
+    /* Product grid */
+    .product-container {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 24px;
+    }
+
+    /* Product card */
+    .product-card {
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        border: 1px solid #e5eaf2;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(31, 48, 75, 0.05);
+        transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(31, 48, 75, 0.12);
+        }
+
+    /* Product image area */
+    .product-image-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 230px;
+        padding: 15px;
+        background: #fff;
+        border-bottom: 1px solid #f0f2f6;
+    }
+
+    .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        transition: transform 0.25s;
+    }
+
+    .product-card:hover .product-image {
+        transform: scale(1.04);
+    }
+
+    /* Product information */
+    .product-details {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        padding: 18px;
+    }
+
+    .product-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: #34445c;
+        line-height: 1.5;
+        margin-bottom: 12px;
+        overflow-wrap: anywhere;
+    }
+
+        .product-name p {
+            margin: 0;
+            text-align: left;
+        }
+
+    .product-price {
+        margin-top: auto;
+        padding-top: 10px;
+        color: #176b45;
+        font-size: 21px;
+        font-weight: 700;
+    }
+
+    /* Responsive layout */
+    @@media (max-width: 1100px) {
+        .product-container {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 800px) {
+        .products-page {
+            padding: 20px;
+        }
+
+        .product-container {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .page-title h2 {
+            font-size: 24px;
+        }
+
+        .category-select {
+            min-width: 200px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .products-page {
+            padding: 14px;
+        }
+
+        .product-container {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .product-image-wrapper {
+            height: 155px;
+            padding: 10px;
+        }
+
+        .product-details {
+            padding: 12px;
+        }
+
+        .product-name {
+            font-size: 13px;
+        }
+
+        .product-price {
+            font-size: 17px;
+        }
+
+        .filter-form,
+        .category-select {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="products-page">
+
+    <!-- Page heading and category filter -->
+    <div class="page-header">
+
+        <div class="page-title">
+            <h2>View Products</h2>
+            <p>Browse and manage the products in your store.</p>
+        </div>
+
+        <form asp-action="Filterproduct" method="post" class="filter-form">
+
+            <select name="id"
+                    class="category-select"
+                    onchange="this.form.submit()">
+
+                <option value="">Select Category</option>
+                
+
+                @foreach (var item in ViewBag.data)
+                {
+                    <option value="@item.Value">
+                        @item.Text
+                    </option>
+                }
+
+            </select>
+
+        </form>
+
+    </div>
+
+    <!-- Product cards -->
+    <div class="product-container">
+
+        @foreach (var item in Model)
+        {
+            <div class="product-card">
+
+                @{
+                    string[] ar = (item.ImagePath ?? "")
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries);
+                }
+
+                <div class="product-image-wrapper">
+
+                    @if (ar.Length > 0)
+                    {
+                        <img src="@Url.Content("~/Products/" + ar[0].Trim())"
+                             class="product-image"
+                             alt="@item.ProductName" />
+                    }
+                    else
+                    {
+                        <span>No image available</span>
+                    }
+
+                </div>
+
+                <div class="product-details">
+
+                    <div class="product-name">
+                        <p>@item.ProductName</p>
+                    </div>
+
+                    <div class="product-price">
+                        ₹@item.Price
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>

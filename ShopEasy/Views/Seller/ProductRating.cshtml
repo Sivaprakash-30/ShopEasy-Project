@@ -1,0 +1,308 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Product Ratings";
+}
+
+<style>
+    .sales-page {
+        min-height: 100vh;
+        padding: 30px;
+        background: #f4f6fb;
+    }
+
+    .sales-header {
+        margin-bottom: 28px;
+    }
+
+        .sales-header h2 {
+            font-weight: 700;
+            color: #243047;
+            margin-bottom: 8px;
+        }
+
+        .sales-header p {
+            color: #778198;
+            margin: 0;
+        }
+
+    .sales-summary {
+        height: 100%;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,.05);
+    }
+
+    .summary-label {
+        color: #778198;
+        font-size: 14px;
+    }
+
+    .summary-value {
+        color: #243047;
+        font-size: 25px;
+        font-weight: 700;
+        margin-top: 8px;
+    }
+
+    .product-card {
+        height: 100%;
+        background: white;
+        border: 1px solid #e8edf5;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,.05);
+        transition: transform .2s, box-shadow .2s;
+    }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 22px rgba(0,0,0,.10);
+        }
+
+    .product-image {
+        width: 100%;
+        height: 210px;
+        object-fit: contain;
+        padding: 12px;
+        background: #f8fafc;
+    }
+
+    .no-image {
+        width: 100%;
+        height: 210px;
+        background: #f8fafc;
+        color: #778198;
+    }
+
+    .product-content {
+        padding: 20px;
+    }
+
+    .product-id {
+        font-size: 12px;
+        color: #778198;
+    }
+
+    .product-name {
+        font-size: 19px;
+        font-weight: 700;
+        color: #26344a;
+        margin: 8px 0;
+    }
+
+    .product-price {
+        font-size: 20px;
+        font-weight: 700;
+        color: #159570;
+        margin-bottom: 18px;
+    }
+
+    .rating-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 14px;
+        background: #fff9e8;
+        border: 1px solid #f5e7b7;
+        border-radius: 8px;
+        color: #566176;
+        font-size: 13px;
+    }
+
+    .rating-value {
+        color: #a87500;
+        font-size: 18px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .stars {
+        color: #f5b301;
+        font-size: 20px;
+        letter-spacing: 1px;
+        margin-top: 12px;
+    }
+
+    .rating-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        margin-top: 15px;
+        padding-top: 13px;
+        border-top: 1px solid #edf0f5;
+        font-size: 13px;
+        color: #778198;
+    }
+
+    .rating-status {
+        font-weight: 600;
+        color: #159570;
+    }
+
+    .no-ratings {
+        padding: 45px 20px;
+        text-align: center;
+        background: white;
+        border-radius: 12px;
+        color: #778198;
+    }
+
+    @@media (max-width: 576px) {
+        .sales-page {
+            padding: 16px;
+        }
+    }
+</style>
+
+<div class="sales-page">
+
+    <div class="sales-header">
+        <h2>⭐ Product Ratings</h2>
+        <p>Check customer ratings for your products.</p>
+    </div>
+    @{
+        IEnumerable<dynamic> products = Model ?? new List<dynamic>();
+        var totalProducts = products.Count();
+
+        var ratedProducts = products.Count(x => x.AverageRating > 0);
+
+        double overallAverageRating = ratedProducts > 0
+        ? products.Where(x => x.AverageRating > 0).Average(x => (double)x.AverageRating)
+        : 0;
+    }
+
+    <!-- Summary cards -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-12 col-md-4">
+            <div class="sales-summary">
+                <div class="summary-label">Total Products</div>
+                <div class="summary-value">
+                    @totalProducts
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="sales-summary">
+                <div class="summary-label">Products With Ratings</div>
+                <div class="summary-value">
+                    @ratedProducts
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="sales-summary">
+                <div class="summary-label">Overall Average Rating</div>
+                <div class="summary-value">
+                    ⭐ @overallAverageRating.ToString("0.0") / 5
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    @if (products.Any())
+    {
+        <div class="row g-4">
+
+            @foreach (var item in products)
+            {
+                string path = item.Image ?? "";
+
+                string fileName = path
+                .Split(',')
+                .FirstOrDefault()?.Trim() ?? "";
+
+                double averageRating =
+                Convert.ToDouble(item.AverageRating);
+
+                int fullStars = (int)Math.Floor(averageRating);
+                fullStars = Math.Clamp(fullStars, 0, 5);
+
+                <div class="col-12 col-sm-6 col-xl-4">
+
+                    <div class="product-card">
+
+                        @if (!string.IsNullOrWhiteSpace(fileName))
+                        {
+                            <img src="@Url.Content("~/Products/" + fileName)"
+                                 class="product-image"
+                                 alt="@item.productname" />
+                        }
+                        else
+                        {
+                            <div class="no-image d-flex justify-content-center align-items-center">
+                                <span>No image available</span>
+                            </div>
+                        }
+
+                    <div class="product-content">
+
+                        <span class="product-id">
+                            Product #@item.pid
+                        </span>
+
+                        <div class="product-name">
+                            @item.productname
+                        </div>
+
+                        <div class="product-price">
+                            ₹@item.Price
+                        </div>
+
+                        <div class="rating-info">
+                            <span>⭐ Average Product Rating</span>
+
+                            <span class="rating-value">
+                                @(averageRating > 0
+                                                            ? averageRating.ToString("0.0") + " / 5"
+                                                            : "N/A")
+                        </span>
+                    </div>
+
+                            <div class="stars">
+                        @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= fullStars)
+                                    {
+                                        <span>★</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color:#d9dee7">★</span>
+                                    }
+                                }
+                        </div>
+
+                        <div class="rating-footer">
+                            <span>Customer rating</span>
+
+                            <span class="rating-status">
+                                @(averageRating > 0
+                                                            ? "Rated"
+                                                            : "Not Rated Yet")
+                        </span>
+                    </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                }
+        </div>
+    }
+    else
+    {
+        <div class="no-ratings">
+            <h4>No products found</h4>
+            <p>Your products and their ratings will appear here.</p>
+        </div>
+    }
+
+</div>

@@ -1,0 +1,409 @@
+
+@model IEnumerable<ShopEasy.Models.CustomerReg>
+
+@{
+    ViewData["Title"] = "View Customers";
+}
+
+<style>
+    .customer-page {
+        padding: 10px 5px;
+        color: #263248;
+    }
+
+    .customer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+        .customer-header h2 {
+            font-size: 25px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .customer-header p {
+            color: #7b8495;
+            margin: 6px 0 0;
+            font-size: 14px;
+        }
+
+    .customer-summary {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        background: #ffffff;
+        border: 1px solid #e8edf4;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 3px 12px rgba(35, 50, 80, 0.04);
+    }
+
+    .summary-icon {
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #e9f2ff;
+        color: #2864c5;
+        border-radius: 12px;
+        font-size: 25px;
+    }
+
+    .summary-label {
+        color: #778197;
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+
+    .summary-count {
+        font-size: 25px;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .customer-card {
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 3px 12px rgba(35, 50, 80, 0.04);
+    }
+
+    .customer-card-header {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 15px;
+        border-bottom: 1px solid #edf0f5;
+    }
+
+        .customer-card-header h5 {
+            font-size: 17px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+    .customer-search {
+        width: 280px;
+        max-width: 100%;
+        position: relative;
+    }
+
+        .customer-search input {
+            width: 100%;
+            border: 1px solid #dfe5ee;
+            border-radius: 8px;
+            padding: 10px 14px 10px 38px;
+            outline: none;
+            font-size: 13px;
+        }
+
+            .customer-search input:focus {
+                border-color: #3978d4;
+                box-shadow: 0 0 0 3px rgba(57, 120, 212, 0.1);
+            }
+
+    .search-icon {
+        position: absolute;
+        left: 13px;
+        top: 10px;
+        color: #8993a5;
+    }
+
+    .customer-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+    }
+
+        .customer-table thead th {
+            background: #f8faff;
+            color: #727e93;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9edf4;
+            white-space: nowrap;
+        }
+
+        .customer-table tbody td {
+            padding: 17px 20px;
+            border-bottom: 1px solid #edf0f5;
+            vertical-align: middle;
+            font-size: 13px;
+        }
+
+        .customer-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .customer-table tbody tr:hover {
+            background: #f9fbff;
+        }
+
+    .customer-id {
+        color: #7c8799;
+        font-weight: 600;
+    }
+
+    .customer-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 150px;
+    }
+
+    .customer-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e9f2ff;
+        color: #2864c5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .customer-name {
+        color: #27354b;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .customer-email {
+        color: #58677e;
+        overflow-wrap: anywhere;
+    }
+
+    .customer-badge {
+        display: inline-block;
+        background: #e8f7ef;
+        color: #218653;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .customer-footer {
+        padding: 15px 20px;
+        border-top: 1px solid #edf0f5;
+        color: #7b8495;
+        font-size: 12px;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .no-customers {
+        text-align: center;
+        padding: 45px 15px !important;
+        color: #7b8495;
+    }
+
+    .empty-icon {
+        font-size: 35px;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    @@media (max-width: 767px) {
+        .customer-header h2 {
+            font-size: 21px;
+        }
+
+        .customer-card-header {
+            align-items: stretch;
+        }
+
+        .customer-search {
+            width: 100%;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .customer-table thead th,
+        .customer-table tbody td {
+            padding: 13px;
+        }
+    }
+</style>
+
+<div class="customer-page">
+
+    <!-- Page heading -->
+    <div class="customer-header">
+        <div>
+            <h2>Customer Management</h2>
+            <p>View and manage customers registered with ShopEasy.</p>
+        </div>
+    </div>
+
+    <!-- Customer count -->
+    <div class="customer-summary">
+        <div class="summary-icon">
+            <i class="mdi mdi-account-group"></i>
+        </div>
+
+        <div>
+            <div class="summary-label">Total Registered Customers</div>
+            <div class="summary-count" id="totalCustomers">
+                @(Model?.Count() ?? 0)
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer table -->
+    <div class="customer-card">
+
+        <div class="customer-card-header">
+            <h5>Registered Customers</h5>
+
+            <div class="customer-search">
+                <i class="mdi mdi-magnify search-icon"></i>
+                <input type="text"
+                       id="customerSearch"
+                       placeholder="Search name, email or ID..."
+                       aria-label="Search customers" />
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="customer-table">
+                <thead>
+                    <tr>
+                        <th>Customer ID</th>
+                        <th>Customer</th>
+                        <th>Email Address</th>
+                        <th>Account</th>
+                    </tr>
+                </thead>
+
+                <tbody id="customerTableBody">
+
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr class="customer-row">
+                                <td class="customer-id">
+                                    #@item.RegId
+                                </td>
+
+                                <td>
+                                    <div class="customer-profile">
+                                        <div class="customer-avatar">
+                                            @(string.IsNullOrWhiteSpace(item.UserName)
+                                                                                ? "?"
+                                                                                : item.UserName.Substring(0, 1).ToUpper())
+                                                                                                                      </div>
+
+                                        <div class="customer-name">
+                                            @(string.IsNullOrWhiteSpace(item.UserName)
+                                                                                ? "Unknown Customer"
+                                                                                : item.UserName)
+                                </div>
+                            </div>
+                        </td>
+
+                                <td class="customer-email">
+                                    @item.Email
+                                </td>
+
+                                <td>
+                                    <span class="customer-badge">
+                                        Registered
+                                    </span>
+                                </td>
+                            </tr>
+                                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="no-customers">
+                                <span class="empty-icon">
+                                    <i class="mdi mdi-account-off-outline"></i>
+                                </span>
+                                <strong>No customers found</strong>
+                                <div>Registered customers will appear here.</div>
+                            </td>
+                        </tr>
+                    }
+
+                    <tr id="noSearchResults" style="display:none;">
+                        <td colspan="4" class="no-customers">
+                            <i class="mdi mdi-magnify empty-icon"></i>
+                            No matching customers found.
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="customer-footer">
+            <span id="customerCount">
+                Showing @(Model?.Count() ?? 0) customers
+            </span>
+
+            <span>ShopEasy Admin Panel</span>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const searchInput = document.getElementById("customerSearch");
+        const rows = Array.from(
+            document.querySelectorAll(".customer-row")
+        );
+        const countLabel = document.getElementById("customerCount");
+        const noResults = document.getElementById("noSearchResults");
+
+        searchInput.addEventListener("input", function () {
+
+            const searchText = this.value.trim().toLowerCase();
+            let visibleCount = 0;
+
+            rows.forEach(function (row) {
+
+                const matches = row.textContent
+                    .toLowerCase()
+                    .includes(searchText);
+
+                row.style.display = matches ? "" : "none";
+
+                if (matches) {
+                    visibleCount++;
+                }
+            });
+
+            noResults.style.display =
+                visibleCount === 0 && rows.length > 0 ? "" : "none";
+
+            countLabel.textContent =
+                "Showing " + visibleCount + " of " +
+                rows.length + " customers";
+        });
+    });
+</script>

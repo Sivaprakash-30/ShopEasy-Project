@@ -1,0 +1,521 @@
+﻿
+@model IEnumerable<Order>
+
+@{
+    ViewData["Title"] = "Seller Dashboard";
+}
+
+<style>
+    .dashboard {
+        padding: 28px;
+        background: #f4f6fa;
+        min-height: 100vh;
+        color: #263449;
+    }
+
+    .welcome-box {
+        background: linear-gradient(120deg, #e8f1ff, #f5f8ff);
+        border: 1px solid #e0eaff;
+        border-radius: 16px;
+        padding: 30px;
+        margin-bottom: 25px;
+    }
+
+        .welcome-box h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #172b4d;
+            margin-bottom: 10px;
+        }
+
+        .welcome-box p {
+            color: #64748b;
+            font-size: 15px;
+            margin-bottom: 0;
+        }
+
+    .dashboard-cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+        margin-bottom: 28px;
+    }
+
+    .dashboard-card {
+        background: #fff;
+        padding: 25px;
+        border-radius: 14px;
+        border: 1px solid #e8edf4;
+        box-shadow: 0 4px 15px rgba(35, 55, 90, .04);
+        transition: transform .2s, box-shadow .2s;
+    }
+
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 22px rgba(35, 55, 90, .08);
+        }
+
+        .dashboard-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #64748b;
+        }
+
+        .dashboard-card .number {
+            font-size: 34px;
+            font-weight: 700;
+            color: #172b4d;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-card a {
+            display: block;
+            text-decoration: none;
+            padding: 11px 15px;
+            background: #edf3ff;
+            border-radius: 8px;
+            color: #285bd4;
+            text-align: center;
+            font-weight: 600;
+            font-size: 13px;
+            transition: .2s;
+        }
+
+            .dashboard-card a:hover {
+                background: #285bd4;
+                color: #fff;
+            }
+
+    .section-box {
+        background: #fff;
+        border-radius: 14px;
+        padding: 25px;
+        border: 1px solid #e8edf4;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(35, 55, 90, .04);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+        .section-header h2 {
+            font-size: 21px;
+            font-weight: 700;
+            color: #172b4d;
+            margin: 0;
+        }
+
+    .order-search {
+        width: 280px;
+        max-width: 100%;
+        padding: 11px 14px;
+        border: 1px solid #dfe5ee;
+        border-radius: 8px;
+        outline: none;
+        font-size: 14px;
+        background: #fff;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+        .order-search:focus {
+            border-color: #4778df;
+            box-shadow: 0 0 0 3px rgba(71, 120, 223, .12);
+        }
+
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .order-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 700px;
+    }
+
+        .order-table th {
+            background: #f5f7fb;
+            color: #64748b;
+            padding: 16px;
+            text-align: left;
+            white-space: nowrap;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            border-bottom: 1px solid #e5eaf1;
+        }
+
+        .order-table td {
+            padding: 15px 16px;
+            border-bottom: 1px solid #edf0f5;
+            vertical-align: middle;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .order-table tbody tr {
+            transition: background .2s;
+        }
+
+            .order-table tbody tr:hover {
+                background: #f8faff;
+            }
+
+            .order-table tbody tr:last-child td {
+                border-bottom: none;
+            }
+
+    .product-image {
+        width: 65px;
+        height: 65px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid #e5eaf1;
+        background: #f8fafc;
+    }
+
+    .order-table td p {
+        margin: 7px 0 0;
+        font-weight: 600;
+        color: #263449;
+    }
+
+    .order-table .btn-success {
+        background: #168653;
+        border: none;
+        border-radius: 7px;
+        padding: 9px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+        .order-table .btn-success:hover {
+            background: #116b41;
+        }
+
+    .no-orders {
+        text-align: center;
+        padding: 35px !important;
+        color: #8490a3 !important;
+    }
+
+    .order-count {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        background: #fff2df;
+        color: #a96508;
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 8px;
+        vertical-align: middle;
+    }
+
+    .recent .order-table {
+        min-width: 650px;
+    }
+
+    @@media (max-width: 900px) {
+        .dashboard-cards {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .dashboard {
+            padding: 14px;
+        }
+
+        .welcome-box,
+        .dashboard-card,
+        .section-box {
+            padding: 18px;
+        }
+
+            .welcome-box h1 {
+                font-size: 23px;
+            }
+
+        .dashboard-cards {
+            grid-template-columns: 1fr;
+        }
+
+        .section-header {
+            align-items: stretch;
+        }
+
+        .order-search {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="dashboard">
+
+    <!-- Welcome Section -->
+    <div class="welcome-box">
+        <h1>Welcome, Seller! 👋</h1>
+        <p>Manage your products, stock and orders from your seller dashboard.</p>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="dashboard-cards">
+
+        <div class="dashboard-card">
+            <h3>📦 Total Products</h3>
+            <div class="number">@(ViewBag.cnt ?? 0)</div>
+            <a asp-controller="Seller" asp-action="Viewproducts">
+                View Products →
+            </a>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>📊 Total Stock Items</h3>
+            <div class="number">@(ViewBag.stock ?? 0)</div>
+            <a asp-controller="Seller" asp-action="ManageStock">
+                Manage Stock →
+            </a>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>🛒 Total Orders</h3>
+            <div class="number">@(ViewBag.orderCount ?? 0)</div>
+            <a asp-controller="Seller" asp-action="Orders">
+                View Orders →
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Pending Orders -->
+    <div class="section-box">
+
+        <div class="section-header">
+            <h2>
+                Pending Orders
+
+                @if (ViewBag.ord is IEnumerable<Order> pendingOrders)
+                {
+                    <span class="order-count">
+                        @pendingOrders.Count() Pending
+                    </span>
+                }
+            </h2>
+
+            <input type="text"
+                   id="pendingOrderSearch"
+                   class="order-search"
+                   placeholder="🔍 Search pending orders..." />
+        </div>
+
+        <div class="table-container">
+            <table class="order-table" id="pendingOrdersTable">
+
+                <thead>
+                    <tr>
+                        <th>Product Image</th>
+                        <th>Username</th>
+                        <th>Quantity</th>
+                        <th>Ordered Date</th>
+                        <th>Total Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (ViewBag.ord is IEnumerable<Order> orders && orders.Any())
+                    {
+                        foreach (var item in orders)
+                        {
+                            <tr>
+                                <td>
+                                    @{
+                                        var imagePath = item.ProductType?.ImagePath ?? "";
+                                        var images = imagePath.Split(
+                                        ',',
+                                        StringSplitOptions.RemoveEmptyEntries
+                                        );
+                                        var firstImage = images.FirstOrDefault();
+                                    }
+
+                                    @if (!string.IsNullOrWhiteSpace(firstImage))
+                                    {
+                                        <img class="product-image"
+                                             src="@Url.Content("~/Products/" + firstImage.Trim())"
+                                             alt="Product image"
+                                             loading="lazy" />
+                                    }
+                                    else
+                                    {
+                                        <span>No image</span>
+                                    }
+
+                                    <p>@item.ProductType?.ProductName</p>
+                                </td>
+
+                                <td>@item.username</td>
+                                <td>@item.quantity</td>
+                                <td>@item.orderdate</td>
+                                <td>@item.totalprice</td>
+
+                                <td>
+                                    <a class="btn btn-success"
+                                       asp-action="ApproveOrder"
+                                       asp-route-id="@item.Oid">
+                                        Approve Order
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="no-orders">
+                                No orders available yet.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Order History -->
+    <div class="section-box recent">
+
+        <div class="section-header">
+            <h2>Recent Order History</h2>
+
+            <input type="text"
+                   id="orderHistorySearch"
+                   class="order-search"
+                   placeholder="🔍 Search order history..." />
+        </div>
+
+        <div class="table-container">
+            <table class="order-table" id="orderHistoryTable">
+
+                <thead>
+                    <tr>
+                        <th>Product Image</th>
+                        <th>Username</th>
+                        <th>Quantity</th>
+                        <th>Ordered Date</th>
+                        <th>Total Price</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (ViewBag.ordHis is IEnumerable<Order> orders1 && orders1.Any())
+                    {
+                        foreach (var item in orders1)
+                        {
+                            <tr>
+                                <td>
+                                    @{
+                                        var imagePath = item.ProductType?.ImagePath ?? "";
+                                        var images = imagePath.Split(
+                                        ',',
+                                        StringSplitOptions.RemoveEmptyEntries
+                                        );
+                                        var firstImage = images.FirstOrDefault();
+                                    }
+
+                                    @if (!string.IsNullOrWhiteSpace(firstImage))
+                                    {
+                                        <img class="product-image"
+                                             src="@Url.Content("~/Products/" + firstImage.Trim())"
+                                             alt="Product image"
+                                             loading="lazy" />
+                                    }
+                                    else
+                                    {
+                                        <span>No image</span>
+                                    }
+
+                                    <p>@item.ProductType?.ProductName</p>
+                                </td>
+
+                                <td>@item.username</td>
+                                <td>@item.quantity</td>
+                                <td>@item.orderdate</td>
+                                <td>@item.totalprice</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="no-orders">
+                                No orders available yet.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        // Search Pending Orders
+        const pendingSearch = document.getElementById("pendingOrderSearch");
+        const pendingTable = document.getElementById("pendingOrdersTable");
+
+        pendingSearch.addEventListener("input", function () {
+            const searchText = this.value.toLowerCase().trim();
+            const rows = pendingTable.querySelectorAll("tbody tr");
+
+            rows.forEach(row => {
+                // Keep the empty-state row visible
+                if (row.cells.length === 1) {
+                    row.style.display = "";
+                    return;
+                }
+
+                const matches = row.textContent
+                    .toLowerCase()
+                    .includes(searchText);
+
+                row.style.display = matches ? "" : "none";
+            });
+        });
+
+        // Search Recent Order History
+        const historySearch = document.getElementById("orderHistorySearch");
+        const historyTable = document.getElementById("orderHistoryTable");
+
+        historySearch.addEventListener("input", function () {
+            const searchText = this.value.toLowerCase().trim();
+            const rows = historyTable.querySelectorAll("tbody tr");
+
+            rows.forEach(row => {
+                // Keep the empty-state row visible
+                if (row.cells.length === 1) {
+                    row.style.display = "";
+                    return;
+                }
+
+                const matches = row.textContent
+                    .toLowerCase()
+                    .includes(searchText);
+
+                row.style.display = matches ? "" : "none";
+            });
+        });
+    </script>
+}

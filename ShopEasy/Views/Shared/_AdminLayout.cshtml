@@ -1,0 +1,484 @@
+﻿
+@{
+    Layout = null;
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ShopEasy - Admin Dashboard</title>
+
+    <link rel="icon"
+          type="image/png"
+          href="~/Admin/assets/images/ShopEasy Logo.png" />
+
+    <link href="~/Admin/assets/libs/flot/css/float-chart.css"
+          rel="stylesheet" />
+
+    <link href="~/Admin/dist/css/style.min.css"
+          rel="stylesheet" />
+
+    <style>
+        /* Sidebar active and expanded states */
+
+        #sidebarnav .sidebar-link {
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+            #sidebarnav .sidebar-link.active {
+                background-color: #2255a4;
+                color: #ffffff !important;
+                border-radius: 4px;
+            }
+
+                #sidebarnav .sidebar-link.active i {
+                    color: #ffffff !important;
+                }
+
+        #sidebarnav .menu-group > .sidebar-link.active {
+            background-color: #263b5b;
+        }
+
+        #sidebarnav .first-level {
+            display: none;
+            padding-left: 0;
+        }
+
+            #sidebarnav .first-level.show {
+                display: block;
+            }
+
+        #sidebarnav .menu-group > .sidebar-link.has-arrow {
+            cursor: pointer;
+        }
+
+        #sidebarnav .sidebar-item {
+            list-style: none;
+        }
+
+        #sidebarnav .sidebar-link:hover {
+            background-color: #344b6b;
+            color: #ffffff !important;
+        }
+
+            #sidebarnav .sidebar-link:hover i {
+                color: #ffffff !important;
+            }
+
+        #sidebarnav .menu-group > .has-arrow::after {
+            transition: transform 0.2s ease;
+        }
+
+        #sidebarnav .menu-group > .has-arrow[aria-expanded="true"]::after {
+            transform: rotate(135deg);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="lds-ripple">
+            <div class="lds-pos"></div>
+            <div class="lds-pos"></div>
+        </div>
+    </div>
+
+    <!-- Main wrapper -->
+    <div id="main-wrapper"
+         data-layout="vertical"
+         data-navbarbg="skin5"
+         data-sidebartype="full"
+         data-sidebar-position="absolute"
+         data-header-position="absolute"
+         data-boxed-layout="full">
+
+        <!-- Top navigation -->
+        <header class="topbar" data-navbarbg="skin5">
+            <nav class="navbar top-navbar navbar-expand-md navbar-dark">
+
+                <div class="navbar-header" data-logobg="skin5">
+                    <a class="navbar-brand"
+                       asp-controller="Admin"
+                       asp-action="Index">
+
+                        <b class="logo-icon ps-2">
+                            <img src="~/Admin/assets/images/logoshopeasy.png"
+                                 alt="ShopEasy Logo"
+                                 class="light-logo"
+                                 width="210" />
+                        </b>
+                    </a>
+
+                    <!-- Mobile sidebar toggle -->
+                    <a class="nav-toggler waves-effect waves-light d-block d-md-none"
+                       href="javascript:void(0)"
+                       aria-label="Toggle sidebar">
+                        <i class="ti-menu ti-close"></i>
+                    </a>
+                </div>
+
+                <div class="navbar-collapse collapse"
+                     id="navbarSupportedContent"
+                     data-navbarbg="skin5">
+
+                    <ul class="navbar-nav float-start me-auto">
+                        <li class="nav-item d-none d-lg-block">
+                            <a class="nav-link sidebartoggler waves-effect waves-light"
+                               href="javascript:void(0)"
+                               data-sidebartype="mini-sidebar"
+                               aria-label="Collapse sidebar">
+                                <i class="mdi mdi-menu font-24"></i>
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+            </nav>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="left-sidebar" data-sidebarbg="skin5">
+            <div class="scroll-sidebar">
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav" class="pt-4">
+
+                        <!-- Dashboard -->
+                        <li class="sidebar-item">
+                            <a asp-controller="Admin"
+                               asp-action="Index"
+                               class="sidebar-link"
+                               data-actions="Index">
+                                <i class="mdi mdi-view-dashboard"></i>
+                                <span class="hide-menu">Dashboard</span>
+                            </a>
+                        </li>
+
+                        <!-- User Management -->
+                        <li class="sidebar-item menu-group">
+                            <a href="javascript:void(0)"
+                               class="sidebar-link has-arrow"
+                               aria-expanded="false">
+                                <i class="mdi mdi-receipt"></i>
+                                <span class="hide-menu">User Management</span>
+                            </a>
+
+                            <ul class="first-level">
+                                <li class="sidebar-item">
+                                    <a asp-controller="Admin"
+                                       asp-action="ViewCustomers"
+                                       class="sidebar-link"
+                                       data-actions="ViewCustomers">
+                                        <i class="mdi mdi-note-outline"></i>
+                                        <span class="hide-menu">View Customers</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Seller Management -->
+                        <li class="sidebar-item menu-group">
+                            <a href="javascript:void(0)"
+                               class="sidebar-link has-arrow"
+                               aria-expanded="false">
+                                <i class="mdi mdi-face"></i>
+                                <span class="hide-menu">Seller Management</span>
+                            </a>
+
+                            <ul class="first-level">
+                                <li class="sidebar-item">
+                                    <a asp-controller="Admin"
+                                       asp-action="RegSeller"
+                                       class="sidebar-link"
+                                       data-actions="RegSeller">
+                                        <i class="mdi mdi-emoticon"></i>
+                                        <span class="hide-menu">
+                                            View Registered Sellers
+                                        </span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item">
+                                    <a asp-controller="Admin"
+                                       asp-action="ViewSeller"
+                                       class="sidebar-link"
+                                       data-actions="ViewSeller">
+                                        <i class="mdi mdi-emoticon-cool"></i>
+                                        <span class="hide-menu">
+                                            Pending Sellers
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                       
+                     
+                        <!-- Manage Category -->
+                        <!-- Product Management Dropdown -->
+                        <li class="sidebar-item menu-group">
+                            <a href="javascript:void(0)"
+                               class="sidebar-link has-arrow"
+                               aria-expanded="false">
+                                <i class="mdi mdi-package-variant-closed"></i>
+                                <span class="hide-menu">Inventory Management</span>
+                            </a>
+
+                            <ul class="first-level">
+
+                                <!-- Manage Category -->
+                                <li class="sidebar-item">
+                                    <a asp-controller="Admin"
+                                       asp-action="ManageCategory"
+                                       class="sidebar-link"
+                                       data-actions="ManageCategory">
+                                        <i class="mdi mdi-format-list-bulleted"></i>
+                                        <span class="hide-menu">Manage Category</span>
+                                    </a>
+                                </li>
+
+                                <!-- Manage Stocks -->
+                                <li class="sidebar-item">
+                                    <a asp-controller="Admin"
+                                       asp-action="ManageStocks"
+                                       class="sidebar-link"
+                                       data-actions="ManageStocks">
+                                        <i class="mdi mdi-database"></i>
+                                        <span class="hide-menu">Manage Stocks</span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                        
+
+                        <!-- Manage Products -->
+                        <li class="sidebar-item menu-group">
+                            <a href="javascript:void(0)"
+                               class="sidebar-link has-arrow"
+                               aria-expanded="false">
+                                <i class="mdi mdi-alert"></i>
+                                <span class="hide-menu">Manage Products</span>
+                            </a>
+
+                            <ul class="first-level">
+                                <li class="sidebar-item">
+                                    <a asp-controller="Admin"
+                                       asp-action="ManageProduct"
+                                       class="sidebar-link"
+                                       data-actions="ManageProduct">
+                                        <i class="mdi mdi-alert-octagon"></i>
+                                        <span class="hide-menu">Add Products</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item">
+                                    <a asp-controller="Admin"
+                                       asp-action="ViewProducts"
+                                       class="sidebar-link"
+                                       data-actions="ViewProducts">
+                                        <i class="mdi mdi-alert-octagon"></i>
+                                        <span class="hide-menu">View Products</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Order History -->
+                        <li class="sidebar-item">
+                            <a asp-controller="Admin"
+                               asp-action="SalesReview"
+                               class="sidebar-link"
+                               data-actions="OrderHistory">
+                                <i class="mdi mdi-chart-bar"></i>
+                                <span class="hide-menu">Sales Review</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a asp-controller="Admin"
+                               asp-action="AdminSales"
+                               class="sidebar-link"
+                               data-actions="OrderHistory">
+                                <i class="mdi mdi-chart-line"></i>
+                                <span class="hide-menu">Admin Sales Review</span>
+                            </a>
+                        </li>
+
+                        <!-- Manage Stocks -->
+                    @*     <li class="sidebar-item">
+                            <a asp-controller="Admin"
+                               asp-action="ManageStocks"
+                               class="sidebar-link"
+                               data-actions="ManageStocks">
+                                <i class="mdi mdi-account-key"></i>
+                                <span class="hide-menu">Manage Stocks</span>
+                            </a>
+                        </li>
+ *@
+                        <!-- Logout -->
+                        <li class="sidebar-item p-3">
+                            <a asp-controller="Index"
+                               asp-action="Index"
+                               class="w-100 btn btn-cyan d-flex align-items-center text-white">
+                                <i class="mdi mdi-logout font-20 me-2"></i>
+                                Logout
+                            </a>
+                        </li>
+
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Page wrapper -->
+        <div class="page-wrapper">
+
+            <!-- Page heading -->
+            <div class="page-breadcrumb">
+                <div class="row">
+                    <div class="col-12 d-flex no-block align-items-center">
+                        <h4 class="page-title">
+                            @currentAction
+                        </h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page content -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                @RenderBody()
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JavaScript libraries -->
+    <script src="~/Admin/assets/libs/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/Admin/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/Admin/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+
+    <script src="~/Admin/assets/extra-libs/sparkline/sparkline.js"></script>
+
+    <script src="~/Admin/dist/js/waves.js"></script>
+
+    <!-- Keep the theme scripts -->
+    <script src="~/Admin/dist/js/sidebarmenu.js"></script>
+    <script src="~/Admin/dist/js/custom.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const sidebar = document.getElementById("sidebarnav");
+
+            if (!sidebar) {
+                return;
+            }
+
+            const groups = sidebar.querySelectorAll(".menu-group");
+            const links = sidebar.querySelectorAll("a.sidebar-link");
+            const currentAction = "@currentAction";
+
+            // Close all expandable menu sections.
+            function closeAllGroups() {
+                groups.forEach(function (group) {
+
+                    const submenu = group.querySelector(".first-level");
+                    const arrow = group.querySelector(".has-arrow");
+
+                    submenu.classList.remove("show");
+                    group.classList.remove("active");
+                    arrow.classList.remove("active");
+
+                    arrow.setAttribute("aria-expanded", "false");
+                });
+            }
+
+            // Remove active styling from all navigation links.
+            function clearActiveLinks() {
+                links.forEach(function (link) {
+                    link.classList.remove("active");
+                });
+            }
+
+            // Open the selected menu and highlight its link.
+            function openGroup(group) {
+                const submenu = group.querySelector(".first-level");
+                const arrow = group.querySelector(".has-arrow");
+
+                submenu.classList.add("show");
+                group.classList.add("active");
+                arrow.classList.add("active");
+
+                arrow.setAttribute("aria-expanded", "true");
+            }
+
+            // Set active state based on the current MVC action.
+            closeAllGroups();
+            clearActiveLinks();
+
+            links.forEach(function (link) {
+
+                const actions = (link.dataset.actions || "")
+                    .split(",")
+                    .map(function (action) {
+                        return action.trim();
+                    });
+
+                if (actions.includes(currentAction)) {
+
+                    link.classList.add("active");
+
+                    const parentGroup = link.closest(".menu-group");
+
+                    if (parentGroup) {
+                        openGroup(parentGroup);
+                    }
+                }
+            });
+
+            // Allow only one management section to remain open.
+            groups.forEach(function (group) {
+
+                const arrow = group.querySelector(".has-arrow");
+
+                arrow.addEventListener("click", function (event) {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    const submenu = group.querySelector(".first-level");
+                    const isOpen = submenu.classList.contains("show");
+
+                    closeAllGroups();
+                    clearActiveLinks();
+
+                    if (!isOpen) {
+                        openGroup(group);
+                    }
+                });
+            });
+
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

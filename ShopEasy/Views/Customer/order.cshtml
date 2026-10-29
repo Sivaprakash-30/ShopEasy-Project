@@ -1,0 +1,467 @@
+﻿@model IEnumerable<ProductType>
+
+@{
+    var products = Model.ToList();
+    var addresses = ViewBag.Add as List<Addresses> ?? new List<Addresses>();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Checkout - Electro</title>
+
+    <!-- Google font -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link type="text/css" rel="stylesheet" href="~/Index/css/bootstrap.min.css" />
+
+    <!-- Slick -->
+    <link type="text/css" rel="stylesheet" href="~/Index/css/slick.css" />
+    <link type="text/css" rel="stylesheet" href="~/Index/css/slick-theme.css" />
+
+    <!-- nouislider -->
+    <link type="text/css" rel="stylesheet" href="~/Index/css/nouislider.min.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/Index/css/font-awesome.min.css">
+
+    <!-- Custom stylesheet -->
+    <link type="text/css" rel="stylesheet" href="~/Index/css/style.css" />
+
+    <style>
+        .product-card {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            border: 1px solid #e4e7ed;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .product-image {
+            object-fit: contain;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-price {
+            font-weight: 700;
+            color: #d10024;
+        }
+
+        .qty-box {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+            .qty-box button {
+                width: 34px;
+                height: 34px;
+                border: 1px solid #d10024;
+                background: #fff;
+                color: #d10024;
+                font-size: 18px;
+                cursor: pointer;
+            }
+
+                .qty-box button:hover {
+                    background: #d10024;
+                    color: #fff;
+                }
+
+            .qty-box input {
+                width: 55px;
+                height: 34px;
+                text-align: center;
+                border: 1px solid #e4e7ed;
+                border-left: 0;
+                border-right: 0;
+            }
+
+        .address-card {
+            border: 1px solid #1e88e5;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            cursor: pointer;
+            font-weight: 400;
+        }
+
+            .address-card i {
+                color: #d10024;
+                font-size: 20px;
+            }
+
+            .address-card input {
+                margin: 0;
+            }
+    </style>
+</head>
+
+<body>
+
+    <!-- BREADCRUMB -->
+    <div id="breadcrumb" class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <h3 class="breadcrumb-header">Checkout</h3>
+
+                    <ul class="breadcrumb-tree">
+                        <li><a asp-action="Index">Home</a></li>
+                        <li class="active">Checkout</li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /BREADCRUMB -->
+    <!-- SECTION -->
+    <div class="section">
+        <div class="container">
+
+            @{
+                var msg = TempData["msg"]?.ToString();
+            }
+            @if (!string.IsNullOrEmpty(msg))
+            {
+                var css = msg.Contains("Insufficient") ? "alert-danger" : "alert-success";
+                <div class="alert @css alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    @msg
+                </div>
+            }
+
+            <!-- This form sends the values to PlaceOrder() -->
+            <form asp-action="PlaceOrder" method="post">
+
+                <div class="row">
+
+                    <!-- LEFT SIDE -->
+                    <div class="col-md-7">
+
+                        <!-- Products -->
+                        <div class="product-container">
+
+                            @for (int i = 0; i < products.Count; i++)
+                            {
+                                var item = products[i];
+
+                                var img = string.IsNullOrEmpty(item.ImagePath)
+                                ? "no-image.png"
+                                : item.ImagePath.Split(',')[0];
+
+                                <div class="product-card"
+                                     data-index="@i"
+                                     data-price="@item.Price"
+                                     data-name="@item.ProductName">
+
+                                    <!-- Product Image -->
+                                    <img src="~/Products/@img"
+                                         class="product-image"
+                                         alt="@item.ProductName"
+                                         width="250"
+                                         height="200" />
+
+                                    <div class="product-details">
+
+                                        <!-- Product Name -->
+                                        <p style="text-align:justify">
+                                            @item.ProductName
+                                        </p>
+
+                                        <!-- Product Price -->
+                                        <div class="product-price">
+                                            ₹@item.Price
+                                        </div>
+
+                                        <!-- Quantity (name matches PlaceOrder(int quantity)) -->
+                                        <div class="qty-box">
+                                            <button type="button" class="qty-minus">−</button>
+
+                                            <input type="number"
+                                                   class="qty-input"
+                                                   name="quantity"
+                                                   value="1"
+                                                   min="1"
+                                                   max="10" />
+
+                                            <button type="button" class="qty-plus">+</button>
+                                        </div>
+
+                                        <!-- Product ID (matches PlaceOrder(int Pid)) -->
+                                        <input type="hidden" name="pid" value="@item.pid" />
+
+                                        <!-- NOTE: the hidden 'productprice' and 'totalprice' inputs were
+                                             removed from here. totalprice now exists only ONCE, in the
+                                             order summary on the right side. -->
+
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                        <!-- /Products -->
+                        <!-- DELIVERY ADDRESS -->
+                        <h4>Delivery Address</h4>
+
+                        @if (addresses.Count == 0)
+                        {
+                            <p>No saved address found.</p>
+                        }
+                        else
+                        {
+                            @foreach (var a in addresses)
+                            {
+                                <label class="address-card">
+
+                                    <!-- name="addressid" matches PlaceOrder(int addressid) -->
+                                    <input type="radio"
+                                           name="addressid"
+                                           value="@a.AddressId"
+                                           required />
+
+                                    <i class="fa fa-map-marker"></i>
+
+                                    <span>@a.Address</span>
+
+                                </label>
+                            }
+                        }
+
+                    </div>
+                    <!-- /LEFT SIDE -->
+                    <!-- RIGHT SIDE -->
+                    <div class="col-md-5 order-details">
+
+                        <div class="section-title text-center">
+                            <h3 class="title">Your Order</h3>
+                        </div>
+
+                        <div class="order-summary">
+
+                            <!-- Heading -->
+                            <div class="order-col">
+                                <div><strong>PRODUCT</strong></div>
+                                <div><strong>TOTAL</strong></div>
+                            </div>
+
+                            <!-- Product summary -->
+                            <div class="order-products">
+
+                                @for (int i = 0; i < products.Count; i++)
+                                {
+                                    <div class="order-col">
+
+                                        <div>
+                                            <span id="sum-qty-@i">1x</span>
+                                            @products[i].ProductName
+                                        </div>
+
+                                        <div id="sum-line-@i">
+                                            ₹@products[i].Price
+                                        </div>
+
+                                    </div>
+                                }
+
+                            </div>
+
+                            <!-- Shipping -->
+                            <div class="order-col">
+                                <div>Shipping</div>
+                                <div><strong>FREE</strong></div>
+                            </div>
+
+                            <!-- GST -->
+                            <div class="order-col">
+                                <div>GST</div>
+                                <div><strong>10%</strong></div>
+                            </div>
+
+                            <!-- Final Total -->
+                            <div class="order-col">
+
+                                <div><strong>TOTAL</strong></div>
+
+                                <div>
+                                    <!-- Display only: NO name attribute, so it is never posted -->
+                                    <input class="order-total"
+                                           id="order-total"
+                                           value="₹0"
+                                           readonly
+                                           style="border:hidden" />
+
+                                    <!-- The ONLY totalprice field. Plain number, no ₹ or commas -->
+                                    <input type="hidden"
+                                           name="totalprice"
+                                           id="totalprice"
+                                           value="0" />
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- PAYMENT METHOD -->
+                        <div class="payment-method">
+
+                            <div class="input-radio">
+                                <input type="radio"
+                                       name="PaymentMethod"
+                                       id="payment-1"
+                                       value="BankTransfer"
+                                       required>
+                                <label for="payment-1">
+                                    <span></span>
+                                    Direct Bank Transfer
+                                </label>
+                            </div>
+
+                            <div class="input-radio">
+                                <input type="radio"
+                                       name="PaymentMethod"
+                                       id="payment-2"
+                                       value="Cheque">
+                                <label for="payment-2">
+                                    <span></span>
+                                    Cheque Payment
+                                </label>
+                            </div>
+
+                            <div class="input-radio">
+                                <input type="radio"
+                                       name="PaymentMethod"
+                                       id="payment-3"
+                                       value="Paypal">
+                                <label for="payment-3">
+                                    <span></span>
+                                    Paypal System
+                                </label>
+                            </div>
+
+                        </div>
+
+                        <!-- TERMS -->
+                        <div class="input-checkbox">
+
+                            <input type="checkbox" id="terms" required>
+
+                            <label for="terms">
+                                <span></span>
+                                I've read and accept the
+                                <a href="#">terms &amp; conditions</a>
+                            </label>
+
+                        </div>
+
+                        <!-- PLACE ORDER -->
+                        <button type="submit"
+                                class="primary-btn order-submit"
+                                style="border:0; width:100%;">
+                            Place order
+                        </button>
+
+                    </div>
+                    <!-- /RIGHT SIDE -->
+
+                </div>
+
+            </form>
+            <br />
+
+        </div>
+    </div>
+    <!-- /SECTION -->
+    <!-- JavaScript -->
+    <script src="~/Index/js/jquery.min.js"></script>
+    <script src="~/Index/js/bootstrap.min.js"></script>
+    <script src="~/Index/js/slick.min.js"></script>
+    <script src="~/Index/js/nouislider.min.js"></script>
+    <script src="~/Index/js/jquery.zoom.min.js"></script>
+    <script src="~/Index/js/main.js"></script>
+
+    <!-- Quantity + Total Calculation -->
+    <script>
+
+        // Convert number into Indian Rupee format
+        function formatINR(n) {
+            return '₹' + n.toLocaleString('en-IN');
+        }
+
+        // Calculate totals
+        function recalc() {
+
+            let subtotal = 0;
+
+            $('.product-card').each(function () {
+
+                const idx   = $(this).data('index');
+                const price = parseFloat($(this).data('price'));
+                const qty   = parseInt($(this).find('.qty-input').val()) || 1;
+
+                const line = price * qty;
+                subtotal += line;
+
+                // Show quantity and line total in the summary
+                $('#sum-qty-' + idx).text(qty + 'x');
+                $('#sum-line-' + idx).text(formatINR(line));
+            });
+
+            // GST (10%) applied ONCE, after the loop
+            const total = Math.round(subtotal * 1.10);
+
+            // Display value (formatted)
+            $('#order-total').val(formatINR(total));
+
+            // Value posted to PlaceOrder(): plain whole number
+            $('#totalprice').val(total);
+        }
+
+        // Keep quantity within min and max
+        function clamp($input, value) {
+
+            const min = parseInt($input.attr('min'));
+            const max = parseInt($input.attr('max'));
+
+            return Math.min(max, Math.max(min, value || min));
+        }
+
+        // PLUS / MINUS buttons
+        $(document).on('click', '.qty-plus, .qty-minus', function () {
+
+            const $input = $(this).siblings('.qty-input');
+            const delta  = $(this).hasClass('qty-plus') ? 1 : -1;
+            const newValue = (parseInt($input.val()) || 1) + delta;
+
+            $input.val(clamp($input, newValue));
+            recalc();
+        });
+
+        // When quantity is typed manually
+        $(document).on('input change', '.qty-input', function () {
+
+            $(this).val(clamp($(this), parseInt($(this).val())));
+            recalc();
+        });
+
+        // Calculate total when page loads
+        recalc();
+
+    </script>
+
+</body>
+</html>

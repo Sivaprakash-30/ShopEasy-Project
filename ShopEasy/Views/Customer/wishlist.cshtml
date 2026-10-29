@@ -1,0 +1,335 @@
+﻿@model List<ShopEasy.Models.ProductType>
+
+@{
+    ViewData["Title"] = "My Wishlist";
+}
+
+<div class="wl2">
+
+    <!-- Banner -->
+    <section class="wl2-banner">
+        <div>
+            <h2>My Wishlist</h2>
+            <p>
+                @if (Model.Count == 0)
+                {
+                    <text>Save the things you love and come back to them anytime.</text>
+                }
+                else
+                {
+                    <text>You have @Model.Count @(Model.Count == 1 ? "item" : "items") waiting for you.</text>
+                }
+            </p>
+        </div>
+        <div class="wl2-banner-heart">&#9829;</div>
+    </section>
+
+    @if (Model.Count == 0)
+    {
+        <div class="wl2-empty">
+            <div class="wl2-empty-heart">&#9825;</div>
+            <h3>Nothing saved yet</h3>
+            <p>Tap the heart on a product and it will show up here.</p>
+            <a asp-controller="Customer" asp-action="Index" class="wl2-btn wl2-btn-main">Start shopping</a>
+        </div>
+    }
+    else
+    {
+        <div class="wl2-list">
+            @foreach (var item in Model)
+            {
+                var img = item.ImagePath ?? "";
+                string[] ar = img.Split(',');
+
+                <article class="wl2-row">
+
+                    <div class="wl2-photo">
+                        <img src="@Url.Content("~/Products/" + ar[0])"
+                             alt="@item.ProductName"
+                             loading="lazy" />
+                    </div>
+
+                    <div class="wl2-info">
+                        <h3>@item.ProductName</h3>
+                        <p>@item.Description</p>
+                    </div>
+
+                    <div class="wl2-buy">
+                        <div class="wl2-price">&#8377;@item.Price</div>
+                        @{
+                            if (item.Cart == null)
+                            {
+                                <div>
+
+                                    <a asp-controller="Customer"
+                                       asp-action="AddtoCartFromwishlist"
+                                       asp-route-id="@item.pid"
+                                       class="wl2-btn wl2-btn-main">
+                                        &#128722; Add to cart
+                                    </a>
+                                
+                                </div>
+
+
+                            }
+                            else
+                            {
+                                <div>
+                                    <label class="wl2-btn wl2-btn-main">
+                                        &#128722; Already in cart
+                                    </label>
+                                </div>
+                                
+                            }
+
+
+                        }
+                        
+                        <a asp-action="Removewishlist"
+                           asp-route-id="@item.pid"
+                           class="wl2-remove">
+                            Remove from wishlist
+                        </a>
+                    </div>
+
+                </article>
+            }
+        </div>
+    }
+
+</div>
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+
+    .wl2 {
+        --ink: #1e1b4b;
+        --indigo: #4338ca;
+        --indigo-dark: #3730a3;
+        --tint: #eef2ff;
+        --amber: #fbbf24;
+        --amber-ink: #78350f;
+        --muted: #6b7280;
+        --rose: #e11d48;
+        font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 24px 16px 56px;
+        color: var(--ink);
+    }
+
+    /* Banner */
+    .wl2-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 28px 32px;
+        margin-bottom: 28px;
+        border-radius: 22px;
+        background: var(--brand-dark);
+        color: #fff;
+    }
+
+        .wl2-banner h2 {
+            margin: 0 0 4px;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .wl2-banner p {
+            margin: 0;
+            opacity: .9;
+        }
+
+    .wl2-banner-heart {
+        font-size: 64px;
+        line-height: 1;
+        color: var(--amber);
+    }
+
+    /* Rows */
+    .wl2-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .wl2-row {
+        display: grid;
+        grid-template-columns: 140px 1fr auto;
+        align-items: center;
+        gap: 24px;
+        padding: 16px;
+        background: var(--tint);
+        border-radius: 20px;
+        border: 2px solid transparent;
+        transition: border-color .2s ease, background .2s ease;
+    }
+
+        .wl2-row:hover {
+            border-color: var(--indigo);
+            background: #fff;
+        }
+
+    .wl2-photo img {
+        display: block;
+        width: 140px;
+        height: 140px;
+        object-fit: cover;
+        border-radius: 16px;
+        background: #fff;
+    }
+
+    .wl2-info h3 {
+        margin: 0 0 6px;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .wl2-info p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 56ch;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Price + actions (same sizes as cart) */
+    .wl2-buy {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        min-width: 140px;
+        text-align: center;
+    }
+
+    .wl2-price {
+        align-self: center;
+        padding: 3px 14px;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--amber-ink);
+        background: var(--amber);
+        border-radius: 999px;
+    }
+
+    .wl2-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 7px 16px;
+        font-size: 13.5px;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 999px;
+        transition: background .15s ease;
+    }
+
+    .wl2-btn-main {
+        background: var(--brand-dark);
+        color: #fff;
+    }
+
+        .wl2-btn-main:hover {
+            background: var(--indigo-dark);
+            color: #fff;
+        }
+
+    /* Remove: outlined rose pill, same as cart */
+    .wl2-remove {
+        display: inline-block;
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--rose);
+        text-decoration: none;
+        border: 1px solid var(--rose);
+        border-radius: 999px;
+        transition: background .15s ease, color .15s ease;
+    }
+
+        .wl2-remove:hover {
+            background: var(--rose);
+            color: #fff;
+        }
+
+        .wl2-btn:focus-visible,
+        .wl2-remove:focus-visible {
+            outline: 3px solid rgba(67, 56, 202, .45);
+            outline-offset: 2px;
+        }
+
+    /* Empty state */
+    .wl2-empty {
+        text-align: center;
+        padding: 56px 16px;
+        background: var(--tint);
+        border-radius: 22px;
+    }
+
+    .wl2-empty-heart {
+        font-size: 60px;
+        line-height: 1;
+        color: var(--indigo);
+        margin-bottom: 10px;
+    }
+
+    .wl2-empty h3 {
+        margin: 0 0 6px;
+        font-weight: 600;
+    }
+
+    .wl2-empty p {
+        margin: 0 0 20px;
+        color: var(--muted);
+    }
+
+    /* Mobile */
+    @@media (max-width: 680px) {
+        .wl2-banner {
+            padding: 22px;
+        }
+
+            .wl2-banner h2 {
+                font-size: 26px;
+            }
+
+        .wl2-banner-heart {
+            font-size: 44px;
+        }
+
+        .wl2-row {
+            grid-template-columns: 96px 1fr;
+            gap: 14px;
+        }
+
+        .wl2-photo img {
+            width: 96px;
+            height: 96px;
+        }
+
+        .wl2-buy {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .wl2-remove {
+            grid-column: 1 / -1;
+            text-align: center;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .wl2-row, .wl2-btn, .wl2-remove {
+            transition: none;
+        }
+    }
+</style>

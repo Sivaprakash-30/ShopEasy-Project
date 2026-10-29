@@ -1,0 +1,366 @@
+@model ShopEasy.Models.CustomerReg
+
+@{
+    ViewData["Title"] = "My Profile";
+    var initial = string.IsNullOrWhiteSpace(Model?.UserName)
+        ? "?"
+        : Model.UserName.Trim().Substring(0, 1).ToUpper();
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<div class="pf">
+
+    <!-- Banner -->
+    <section class="pf-banner">
+        <div class="pf-avatar">@initial</div>
+        <div>
+            <h2>My Profile</h2>
+            <p>@(string.IsNullOrWhiteSpace(Model?.UserName) ? "Update your account details." : Model.UserName)</p>
+        </div>
+    </section>
+
+    <form asp-action="Updateprofile" method="post" class="pf-form">
+
+        <div asp-validation-summary="ModelOnly" class="pf-error"></div>
+
+        <!-- Account details -->
+        <section class="pf-card">
+            <h3 class="pf-card-title">Account details</h3>
+
+            <div class="pf-table">
+
+                <div class="pf-tr" style="visibility:hidden">
+                    <label asp-for="RegId" class="pf-th"></label>
+                    <div class="pf-td">
+                        <input asp-for="RegId" class="pf-input" />
+                        <span asp-validation-for="RegId" class="pf-error"></span>
+                    </div>
+                </div>
+                <div class="pf-tr">
+                    <label asp-for="UserName" class="pf-th"></label>
+                    <div class="pf-td">
+                        <input asp-for="UserName" class="pf-input" />
+                        <span asp-validation-for="UserName" class="pf-error"></span>
+                    </div>
+                </div>
+
+                <div class="pf-tr">
+                    <label asp-for="Email" class="pf-th"></label>
+                    <div class="pf-td">
+                        <input asp-for="Email" class="pf-input" readonly/> 
+                        <span asp-validation-for="Email" class="pf-error"></span>
+                    </div>
+                </div>
+
+                <div class="pf-tr">
+                    <label asp-for="loginModel.Password" class="pf-th"></label>
+                    <div class="pf-td">
+                        <input asp-for="loginModel.Password" class="pf-input" />
+                        <span asp-validation-for="loginModel.Password" class="pf-error"></span>
+                    </div>
+                </div>
+                <button type="submit" class="pf-btn pf-btn-main" name="btn" value="Update">Update</button>
+            </div>
+        </section>
+
+        <!-- Address -->
+        <section class="pf-card">
+            <div class="pf-card-head">
+                <h3 class="pf-card-title">Address</h3>
+                <button type="button" id="addressToggle" class="pf-btn pf-btn-outline" onclick="toggleAddress()">
+                    + Add address
+                </button>
+
+
+            
+
+
+            </div>
+            <br />
+
+            @{
+                foreach (var item in ViewBag.address as List<Addresses>)
+                {
+                    <div class="jumbotron justify-content-lg-around" style="border:1px solid blue;padding:20px">
+                        <i class="fa-solid fa-location-dot">    </i>  <span>@item.Address</span>
+                    </div>
+                    <br/>
+
+                }
+            }
+
+
+
+            <div id="addressBox" class="pf-address" hidden>
+                <textarea name="Address"
+                          class="pf-input"
+                          rows="4"
+                          placeholder="House / flat, street, city, PIN code"></textarea>
+                <div class="pf-actions">
+                    <button type="submit" class="pf-btn pf-btn-main" name="btn" value="address">Add Address</button>
+                    
+                </div>
+
+
+            </div>
+        </section>
+
+        <!-- Actions -->
+       
+
+    </form>
+
+</div>
+
+<script>
+    function toggleAddress() {
+        var box = document.getElementById("addressBox");
+        var btn = document.getElementById("addressToggle");
+        var show = box.hasAttribute("hidden");
+
+        if (show) {
+            box.removeAttribute("hidden");
+            btn.textContent = "Cancel";
+        } else {
+            box.setAttribute("hidden", "");
+            btn.textContent = "+ Add address";
+        }
+    }
+</script>
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+
+    .pf {
+        --ink: #1e1b4b;
+        --brand: var(--brand-dark, #4338ca);
+        --indigo: #4338ca;
+        --tint: #eef2ff;
+        --line: #d9defa;
+        --muted: #6b7280;
+        --rose: #e11d48;
+        font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 24px 16px 56px;
+        color: var(--ink);
+    }
+
+    /* Banner */
+    .pf-banner {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 28px 32px;
+        margin-bottom: 24px;
+        border-radius: 22px;
+        background: var(--brand);
+        color: #fff;
+    }
+
+        .pf-banner h2 {
+            margin: 0 0 2px;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .pf-banner p {
+            margin: 0;
+            opacity: .9;
+        }
+
+    .pf-avatar {
+        flex-shrink: 0;
+        width: 64px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--brand);
+        background: #fff;
+        border-radius: 50%;
+    }
+
+    /* Cards */
+    .pf-card {
+        margin-bottom: 20px;
+        padding: 20px 24px;
+        background: var(--tint);
+        border: 2px solid transparent;
+        border-radius: 20px;
+        transition: border-color .2s ease, background .2s ease;
+    }
+
+        .pf-card:focus-within {
+            border-color: var(--indigo);
+            background: #fff;
+        }
+
+    .pf-card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .pf-card-title {
+        margin: 0 0 12px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .pf-card-head .pf-card-title {
+        margin-bottom: 0;
+    }
+
+    /* Table-style rows */
+    .pf-table {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pf-tr {
+        display: grid;
+        grid-template-columns: 170px 1fr;
+        align-items: start;
+        gap: 16px;
+        padding: 14px 0;
+        border-top: 1px solid var(--line);
+    }
+
+    .pf-th {
+        margin: 0;
+        padding-top: 10px;
+        font-weight: 600;
+        color: var(--muted);
+    }
+
+    .pf-td {
+        min-width: 0;
+    }
+
+    /* Inputs */
+    .pf-input {
+        display: block;
+        width: 100%;
+        padding: 10px 14px;
+        font: inherit;
+        color: var(--ink);
+        background: #fff;
+        border: 1.5px solid var(--line);
+        border-radius: 12px;
+    }
+
+        .pf-input:focus {
+            outline: none;
+            border-color: var(--indigo);
+            box-shadow: 0 0 0 3px rgba(67, 56, 202, .18);
+        }
+
+    textarea.pf-input {
+        resize: vertical;
+    }
+
+    .pf-address {
+        margin-top: 14px;
+    }
+
+        .pf-address[hidden] {
+            display: none;
+        }
+
+    .pf-error {
+        display: block;
+        margin-top: 4px;
+        font-size: 13px;
+        color: var(--rose);
+    }
+
+    /* Buttons */
+    .pf-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .pf-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 24px;
+        font: inherit;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 999px;
+        cursor: pointer;
+        border: 1.5px solid transparent;
+    }
+
+    .pf-btn-main {
+        background: var(--brand);
+        color: #fff;
+    }
+
+        .pf-btn-main:hover {
+            filter: brightness(.9);
+        }
+
+    .pf-btn-outline {
+        padding: 8px 18px;
+        font-size: 14px;
+        color: var(--brand);
+        background: #fff;
+        border-color: var(--brand);
+    }
+
+        .pf-btn-outline:hover {
+            background: var(--brand);
+            color: #fff;
+        }
+
+    .pf-back {
+        color: var(--muted);
+        text-decoration: none;
+    }
+
+        .pf-back:hover {
+            color: var(--ink);
+            text-decoration: underline;
+        }
+
+        .pf-btn:focus-visible,
+        .pf-back:focus-visible {
+            outline: 3px solid rgba(67, 56, 202, .45);
+            outline-offset: 2px;
+        }
+
+    /* Mobile */
+    @@media (max-width: 600px) {
+        .pf-banner {
+            padding: 22px;
+            gap: 14px;
+        }
+
+            .pf-banner h2 {
+                font-size: 24px;
+            }
+
+        .pf-tr {
+            grid-template-columns: 1fr;
+            gap: 4px;
+        }
+
+        .pf-th {
+            padding-top: 0;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .pf-card {
+            transition: none;
+        }
+    }
+</style>

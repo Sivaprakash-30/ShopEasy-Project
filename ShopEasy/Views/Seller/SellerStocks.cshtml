@@ -1,0 +1,417 @@
+﻿
+@model ShopEasy.Models.Stock
+
+<style>
+    body {
+        background: #f4f7fc;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #263449;
+    }
+
+    .stock-page {
+        min-height: 100vh;
+        padding: 30px;
+    }
+
+    /* Page heading */
+    .page-header {
+        margin-bottom: 28px;
+    }
+
+        .page-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e3558;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            font-size: 14px;
+            color: #7b8799;
+            margin: 0;
+        }
+
+    /* Main layout */
+    .stock-layout {
+        display: grid;
+        grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.7fr);
+        gap: 25px;
+        align-items: start;
+    }
+
+    /* Form and table cards */
+    .stock-card {
+        background: #ffffff;
+        border: 1px solid #e5eaf2;
+        border-radius: 14px;
+        padding: 25px;
+        box-shadow: 0 4px 18px rgba(31, 48, 75, 0.05);
+        min-width: 0;
+    }
+
+    .card-heading {
+        margin-bottom: 24px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #edf0f5;
+    }
+
+        .card-heading h3 {
+            color: #1e3558;
+            font-size: 19px;
+            font-weight: 700;
+            margin: 0 0 7px;
+        }
+
+        .card-heading p {
+            color: #8490a3;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+    /* Form fields */
+    .form-group {
+        margin-bottom: 21px;
+    }
+
+    .control-label {
+        display: block;
+        color: #34445c;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 9px;
+    }
+
+    .form-control {
+        width: 100%;
+        min-height: 44px;
+        padding: 11px 13px;
+        border: 1px solid #d9e1ec;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #263449;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+        .form-control:focus {
+            border-color: #3976db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(57, 118, 219, 0.12);
+        }
+
+    select.form-control {
+        cursor: pointer;
+    }
+
+    .text-danger {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+    }
+
+    .validation-summary-errors {
+        background: #fff1f1;
+        border: 1px solid #ffd5d5;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 18px;
+        font-size: 13px;
+    }
+
+    /* Save button */
+    .btn-save {
+        width: 100%;
+        padding: 12px 18px;
+        border: none;
+        border-radius: 8px;
+        background: #285fc5;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.2s;
+    }
+
+        .btn-save:hover {
+            background: #1e4da5;
+            transform: translateY(-1px);
+        }
+
+    /* Stock table */
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .stock-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 450px;
+    }
+
+        .stock-table thead th {
+            background: #f5f7fb;
+            color: #64748b;
+            padding: 15px 14px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            border-bottom: 1px solid #e5eaf2;
+            white-space: nowrap;
+        }
+
+        .stock-table tbody td {
+            padding: 17px 14px;
+            font-size: 14px;
+            color: #46556b;
+            border-bottom: 1px solid #edf0f5;
+            vertical-align: middle;
+        }
+
+        .stock-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .stock-table tbody tr:hover {
+            background: #f8faff;
+        }
+
+        .stock-table tbody td:first-child {
+            color: #263449;
+            font-weight: 600;
+        }
+
+    .quantity-badge {
+        display: inline-block;
+        padding: 6px 11px;
+        border-radius: 20px;
+        background: #e8f7ee;
+        color: #187747;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .empty-stock {
+        text-align: center;
+        padding: 35px 15px !important;
+        color: #8490a3 !important;
+        font-weight: 400 !important;
+    }
+
+    /* Responsive design */
+    @@media (max-width: 1000px) {
+        .stock-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .stock-page {
+            padding: 18px 12px;
+        }
+
+        .stock-card {
+            padding: 18px;
+        }
+
+        .page-header h2 {
+            font-size: 24px;
+        }
+    }
+</style>
+
+<div class="stock-page">
+
+    <!-- Page Heading -->
+    <div class="page-header">
+        <h2>Manage Stock</h2>
+        <p>Update your product inventory and monitor available stock.</p>
+    </div>
+
+    <div class="stock-layout">
+
+        <!-- Add Stock Form -->
+        <div class="stock-card">
+
+            <div class="card-heading">
+                <h3>Add Stock</h3>
+                <p>Select a category and product, then enter the quantity.</p>
+            </div>
+
+            <form asp-action="Store" method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger"></div>
+
+                <!-- Category -->
+                <div class="form-group">
+
+                    <label class="control-label">
+                        Category
+                    </label>
+
+                    <select class="form-control" id="Category">
+                        <option value="">Select Category</option>
+
+                        @foreach (var item in ViewBag.categories)
+                        {
+                            <option value="@item.Value">
+                                @item.Text
+                            </option>
+                        }
+                    </select>
+
+                </div>
+
+                <!-- Product -->
+                <div class="form-group">
+
+                    <label class="control-label">
+                        Product
+                    </label>
+
+                    <select asp-for="Pid"
+                            class="form-control"
+                            id="Product">
+
+                        <option value="">Select Product</option>
+
+                    </select>
+
+                    <span asp-validation-for="Pid"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <!-- Quantity -->
+                <div class="form-group">
+
+                    <label asp-for="Quantity"
+                           class="control-label">
+                        Stock Quantity
+                    </label>
+
+                    <input asp-for="Quantity"
+                           class="form-control"
+                           placeholder="Enter stock quantity" />
+
+                    <span asp-validation-for="Quantity"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <!-- Save -->
+                <div class="form-group">
+                    <button type="submit" class="btn-save">
+                        Save Stock
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+        <!-- Stock Details -->
+        <div class="stock-card">
+
+            <div class="card-heading">
+                <h3>Stock Details</h3>
+                <p>Review the current stock quantities for your products.</p>
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="stock-table">
+
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Stock Quantity</th>
+                            <th>Last Updated</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in
+                                                (IEnumerable<ShopEasy.Models.Stock>)ViewData["SellerStocks"])
+                        {
+                            <tr>
+
+                                <td>
+                                    @item.ProductType.ProductName
+                                </td>
+
+                                <td>
+                                    <span class="quantity-badge">
+                                        @item.Quantity
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @item.Lastupdate
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        const categoryDropdown = document.getElementById("Category");
+        const productDropdown = document.getElementById("Product");
+
+        categoryDropdown.addEventListener("change", async function () {
+            const categoryId = this.value;
+
+            // Reset the product dropdown
+            productDropdown.innerHTML =
+                '<option value="">Select Product</option>';
+
+            if (!categoryId) return;
+
+            try {
+                const response = await fetch(
+                    `GetProductsByCategory?categoryId=${categoryId}`
+                );
+
+                if (!response.ok) {
+                    throw new Error("Failed to load products.");
+                }
+
+                const products = await response.json();
+
+                products.forEach(p => {
+                    const option = document.createElement("option");
+                    option.value = p.id;
+                    option.textContent = p.name;
+
+                    productDropdown.appendChild(option);
+                });
+            }
+            catch (error) {
+                console.error("Failed to load products:", error);
+            }
+        });
+    </script>
+}
+

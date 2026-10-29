@@ -1,0 +1,590 @@
+﻿@model ShopEasy.Models.CustomerComponent
+
+@{
+    Layout = null;
+    ViewData["Title"] = "ShopEasy - Account";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ShopEasy - Account</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i"
+          rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body, div, span, h1, h2, p, a, form, label {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(to top, #76b852, #8DC26F);
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .main-w3layouts {
+            padding: 3em 0 1em;
+        }
+
+        h1 {
+            font-size: 3em;
+            text-align: center;
+            color: #fff;
+            font-weight: 300;
+            letter-spacing: 4px;
+        }
+
+        .main-agileinfo {
+            width: 35%;
+            margin: 3em auto;
+            background: rgba(0, 0, 0, 0.18);
+        }
+
+        .agileits-top {
+            padding: 3em;
+        }
+
+        .form-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+            .form-toggle button {
+                flex: 1;
+                border: 1px solid rgba(255, 255, 255, .5);
+                background: rgba(0, 0, 0, .15);
+                color: #fff;
+                padding: 12px 10px;
+                cursor: pointer;
+                font-family: inherit;
+                font-size: .85em;
+                border-radius: 5px;
+                transition: .3s;
+            }
+
+                .form-toggle button:hover,
+                .form-toggle button.active {
+                    background: #76b852;
+                    border-color: #76b852;
+                }
+
+        .form-section {
+            display: none;
+        }
+
+            .form-section.active {
+                display: block;
+            }
+
+        .form-title {
+            color: #fff;
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+        }
+
+        .form-field {
+            margin-bottom: 18px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"] {
+            width: 100%;
+            display: block;
+            border: 1px solid rgba(255, 255, 255, .37);
+            padding: 13px;
+            color: #fff;
+            background: rgba(255, 255, 255, .03);
+            font-family: inherit;
+            font-size: .9em;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #fff;
+        }
+
+        input::placeholder {
+            color: #fff;
+            opacity: .9;
+        }
+
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #76b852;
+        }
+
+        .terms {
+            color: #fff;
+            font-size: .85em;
+            line-height: 1.6;
+            margin: 18px 0;
+        }
+
+            .terms label {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                cursor: pointer;
+            }
+
+            .terms input {
+                flex-shrink: 0;
+                margin-top: 3px;
+            }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 14px;
+            margin: 15px 0 8px;
+            color: #fff;
+            background: #76b852;
+            border: 1px solid #76b852;
+            cursor: pointer;
+            font-size: .9em;
+            letter-spacing: 2px;
+            font-family: inherit;
+            transition: .3s;
+        }
+
+            input[type="submit"]:hover {
+                background: #8DC26F;
+            }
+
+        .registration-links {
+            text-align: center;
+            margin: 18px 0 5px;
+            color: #fff;
+            font-size: .95em;
+        }
+
+            .registration-links a {
+                color: #fff;
+                padding: 0 8px;
+            }
+
+                .registration-links a:hover {
+                    color: #e3ffd5;
+                    text-decoration: underline;
+                }
+
+        .field-error {
+            display: block;
+            color: #fff0a8;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .colorlibcopy-agile {
+            margin: 2em 0 1em;
+            text-align: center;
+        }
+
+            .colorlibcopy-agile p {
+                color: #fff;
+                font-size: .9em;
+                line-height: 1.8em;
+            }
+
+        .wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .colorlib-bubbles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+            .colorlib-bubbles li {
+                position: absolute;
+                list-style: none;
+                width: 40px;
+                height: 40px;
+                background: rgba(255, 255, 255, .15);
+                bottom: -160px;
+                animation: square 20s infinite linear;
+                border-radius: 50%;
+            }
+
+                .colorlib-bubbles li:nth-child(1) {
+                    left: 10%;
+                }
+
+                .colorlib-bubbles li:nth-child(2) {
+                    left: 20%;
+                    width: 80px;
+                    height: 80px;
+                    animation-delay: 2s;
+                    animation-duration: 17s;
+                }
+
+                .colorlib-bubbles li:nth-child(3) {
+                    left: 25%;
+                    animation-delay: 4s;
+                }
+
+                .colorlib-bubbles li:nth-child(4) {
+                    left: 40%;
+                    width: 60px;
+                    height: 60px;
+                    animation-duration: 22s;
+                }
+
+                .colorlib-bubbles li:nth-child(5) {
+                    left: 70%;
+                }
+
+                .colorlib-bubbles li:nth-child(6) {
+                    left: 80%;
+                    width: 120px;
+                    height: 120px;
+                    animation-delay: 3s;
+                }
+
+                .colorlib-bubbles li:nth-child(7) {
+                    left: 32%;
+                    width: 160px;
+                    height: 160px;
+                    animation-delay: 7s;
+                }
+
+                .colorlib-bubbles li:nth-child(8) {
+                    left: 55%;
+                    width: 20px;
+                    height: 20px;
+                    animation-delay: 15s;
+                    animation-duration: 40s;
+                }
+
+                .colorlib-bubbles li:nth-child(9) {
+                    left: 25%;
+                    width: 10px;
+                    height: 10px;
+                    animation-delay: 2s;
+                    animation-duration: 40s;
+                }
+
+                .colorlib-bubbles li:nth-child(10) {
+                    left: 90%;
+                    width: 160px;
+                    height: 160px;
+                    animation-delay: 11s;
+                }
+
+        @@keyframes square {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-700px) rotate(600deg);
+            }
+        }
+
+        @@media (max-width: 1366px) {
+            .main-agileinfo {
+                width: 40%;
+            }
+
+            h1 {
+                font-size: 2.6em;
+            }
+        }
+
+        @@media (max-width: 1080px) {
+            .main-agileinfo {
+                width: 50%;
+            }
+        }
+
+        @@media (max-width: 900px) {
+            .main-agileinfo {
+                width: 65%;
+            }
+        }
+
+        @@media (max-width: 600px) {
+            .main-agileinfo {
+                width: 85%;
+            }
+
+            .agileits-top {
+                padding: 2em;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .form-toggle {
+                flex-direction: column;
+            }
+
+                .form-toggle button {
+                    width: 100%;
+                }
+        }
+
+        @@media (max-width: 400px) {
+            .main-agileinfo {
+                width: 92%;
+            }
+
+            .agileits-top {
+                padding: 1.3em;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-w3layouts wrapper">
+
+        <h1>ShopEasy</h1>
+
+        <div class="main-agileinfo">
+            <div class="agileits-top">
+
+                <!-- Registration toggle -->
+                <div class="form-toggle">
+                    <button type="button"
+                            id="customerButton"
+                            class="active"
+                            onclick="showRegistration('customer')">
+                        Customer Registration
+                    </button>
+
+                    <button type="button"
+                            id="sellerButton"
+                            onclick="showRegistration('seller')">
+                        Seller Registration
+                    </button>
+                </div>
+
+                <!-- Customer Registration -->
+                <form action="CustomerReg" method="post">
+                    <div id="customerRegistration" class="form-section active">
+
+                        <div class="form-title">Customer Registration</div>
+
+                        <div class="form-field">
+                            <input type="text"
+                                   placeholder="Username"
+                                   asp-for="CustomerReg.UserName"
+                                   required />
+                        </div>
+
+                        <div class="form-field">
+                            <input type="email"
+                                   placeholder="Email"
+                                   asp-for="CustomerReg.Email"
+                                   required />
+                        </div>
+
+                        <div class="form-field">
+                            <input type="password"
+                                   placeholder="Password"
+                                   asp-for="LoginRef.Password"
+                                   required />
+                        </div>
+
+                        <div class="form-field">
+                            <input type="password"
+                                   name="ConfirmPassword"
+                                   placeholder="Confirm Password"
+                                   required />
+                        </div>
+
+                        <div class="terms">
+                            <label>
+                                <input type="checkbox" required />
+                                <span>I Agree To The Terms &amp; Conditions</span>
+                            </label>
+                        </div>
+
+                        <input type="submit"
+                               name="btn"
+                               value="REGISTER" />
+
+                        <!-- Only customer links appear with customer form -->
+                        <div class="registration-links">
+                            <a asp-action="Login">Login</a>
+                            <span>|</span>
+                            <a asp-action="Index">Home</a>
+                        </div>
+
+                    </div>
+                </form>
+
+                <!-- Seller Registration -->
+                <form action="CustomerReg" method="post">
+                    <div id="sellerRegistration" class="form-section">
+
+                        <div class="form-title">Seller Registration</div>
+
+                        <div class="form-field">
+                            <input type="text"
+                                   placeholder="Company Name"
+                                   asp-for="SellerReg.CompanyName"
+                                   required />
+                            <span asp-validation-for="SellerReg.CompanyName"
+                                  class="field-error"></span>
+                        </div>
+
+                        <div class="form-field">
+                            <input type="text"
+                                   placeholder="Seller License No"
+                                   asp-for="SellerReg.SellerLiscenceNo"
+                                   required />
+                            <span asp-validation-for="SellerReg.SellerLiscenceNo"
+                                  class="field-error"></span>
+                        </div>
+
+                        <div class="form-field">
+                            <input type="text"
+                                   placeholder="Seller Name"
+                                   asp-for="SellerReg.SellerName"
+                                   required />
+                            <span asp-validation-for="SellerReg.SellerName"
+                                  class="field-error"></span>
+                        </div>
+
+                        <div class="form-field">
+                            <input type="email"
+                                   placeholder="Email"
+                                   asp-for="SellerReg.Email"
+                                   required />
+                            <span asp-validation-for="SellerReg.Email"
+                                  class="field-error"></span>
+                        </div>
+
+                        <div class="form-field">
+                            <input type="tel"
+                                   placeholder="Phone Number"
+                                   asp-for="SellerReg.Contact"
+                                   required />
+                            <span asp-validation-for="SellerReg.Contact"
+                                  class="field-error"></span>
+                        </div>
+
+                        <div class="form-field">
+                            <input type="password"
+                                   placeholder="Password"
+                                   asp-for="LoginRef.Password"
+                                   required />
+                            <span asp-validation-for="LoginRef.Password"
+                                  class="field-error"></span>
+                        </div>
+
+                        <div class="form-field">
+                            <input type="password"
+                                   name="ConfirmPassword"
+                                   placeholder="Confirm Password"
+                                   required />
+                        </div>
+
+                        <div class="terms">
+                            <label>
+                                <input type="checkbox" required />
+                                <span>I Agree To The Seller Terms &amp; Conditions</span>
+                            </label>
+                        </div>
+
+                        <input type="submit"
+                               name="btn"
+                               value="REGISTER AS SELLER" />
+
+                        <!-- Only seller links appear with seller form -->
+                        <div class="registration-links">
+                            <a asp-action="Login">Login</a>
+                            <span>|</span>
+                            <a asp-action="Index">Home</a>
+                        </div>
+
+                    </div>
+                </form>
+
+                <div class="colorlibcopy-agile">
+                    <p>© 2026 ShopEasy. All rights reserved.</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Animated background bubbles -->
+        <ul class="colorlib-bubbles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+
+    </div>
+
+    <script>
+        function showRegistration(type) {
+            const customerForm =
+                document.getElementById("customerRegistration");
+            const sellerForm =
+                document.getElementById("sellerRegistration");
+
+            const customerButton =
+                document.getElementById("customerButton");
+            const sellerButton =
+                document.getElementById("sellerButton");
+
+            customerForm.classList.remove("active");
+            sellerForm.classList.remove("active");
+            customerButton.classList.remove("active");
+            sellerButton.classList.remove("active");
+
+            if (type === "customer") {
+                customerForm.classList.add("active");
+                customerButton.classList.add("active");
+            } else if (type === "seller") {
+                sellerForm.classList.add("active");
+                sellerButton.classList.add("active");
+            }
+        }
+    </script>
+</body>
+</html>

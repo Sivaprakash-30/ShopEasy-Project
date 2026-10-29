@@ -1,0 +1,233 @@
+﻿@model IEnumerable<ShopEasy.Models.Order>
+
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<div class="orders-page container">
+    <div class="orders-header">
+        <h2>My Orders</h2>
+        <p class="text-muted">Track, view and manage all your purchases</p>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            var image = item.ProductType?.ImagePath?.Split(',').FirstOrDefault();
+
+            string statusText, statusClass;
+            switch (item.status)
+            {
+                case 0: statusText = "Pending"; statusClass = "status-pending"; break;
+                case 1: statusText = "Approved"; statusClass = "status-approved"; break;
+                case 2: statusText = "Cancelled"; statusClass = "status-cancelled"; break;
+                default: statusText = "Unknown"; statusClass = "status-unknown"; break;
+            }
+
+            <div class="order-card">
+
+                <!-- Card header -->
+                <div class="order-card-header">
+                    <div class="meta">
+                        <span class="label">ORDER PLACED</span>
+                        <span class="value">@item.orderdate</span>
+                    </div>
+                    <div class="meta">
+                        <span class="label">TOTAL</span>
+                        <span class="value">₹@item.totalprice</span>
+                    </div>
+                    <div class="meta">
+                        <span class="label">ORDER ID</span>
+                        <span class="value">#@item.Oid</span>
+                    </div>
+                    <div class="meta ms-auto">
+                        <span class="status-badge @statusClass">@statusText</span>
+                    </div>
+                </div>
+
+                <!-- Card body -->
+                <div class="order-card-body">
+                    <div class="product-img">
+                        @if (!string.IsNullOrEmpty(image))
+                        {
+                            <img src="@Url.Content("~/Products/" + image)" alt="@item.ProductType?.ProductName" />
+                        }
+                        else
+                        {
+                            <div class="no-image">No image</div>
+                        }
+                    </div>
+
+                    <div class="product-info">
+                        <h5>@item.ProductType?.ProductName</h5>
+                        <p class="mb-1">Price: <strong>₹@item.ProductType?.Price</strong></p>
+                        <p class="mb-0">Quantity: <strong>@item.quantity</strong></p>
+                    </div>
+
+                    <div class="order-actions">
+                        <a class="btn btn-success"
+                           href="@Url.Action("OrderDetails", "Customer", new { id = item.Oid })">
+                            View Order Details
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-orders">
+            <div class="icon">🛒</div>
+            <h4>No orders yet</h4>
+            <p class="text-muted">Looks like you haven't placed any orders.</p>
+            <a class="btn btn-success" href="@Url.Action("Index", "Customer")">Start Shopping</a>
+        </div>
+    }
+</div>
+
+<style>
+    .orders-page {
+        max-width: 1000px;
+        margin: 30px auto;
+    }
+
+    .orders-header {
+        margin-bottom: 24px;
+    }
+
+        .orders-header h2 {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+    .order-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        margin-bottom: 22px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,.05);
+        transition: box-shadow .2s ease, transform .2s ease;
+    }
+
+        .order-card:hover {
+            box-shadow: 0 6px 18px rgba(0,0,0,.10);
+            transform: translateY(-2px);
+        }
+
+    .order-card-header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 36px;
+        align-items: center;
+        padding: 14px 22px;
+        background: #f3f6f9;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .meta {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .meta .label {
+            font-size: 11px;
+            letter-spacing: .5px;
+            color: #6b7280;
+        }
+
+        .meta .value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #222;
+        }
+
+    .status-badge {
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .status-pending {
+        background: #fff4d6;
+        color: #b7791f;
+    }
+
+    .status-approved {
+        background: #d9f7e4;
+        color: #1e8449;
+    }
+
+    .status-cancelled {
+        background: #fde2e2;
+        color: #c0392b;
+    }
+
+    .status-unknown {
+        background: #e5e7eb;
+        color: #555;
+    }
+
+    .order-card-body {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 22px;
+        padding: 22px;
+    }
+
+    .product-img img,
+    .product-img .no-image {
+        width: 110px;
+        height: 110px;
+        object-fit: contain;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        background: #fff;
+        padding: 6px;
+    }
+
+    .no-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: #999;
+    }
+
+    .product-info {
+        flex: 1;
+        min-width: 200px;
+    }
+
+        .product-info h5 {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+    .empty-orders {
+        text-align: center;
+        padding: 70px 20px;
+        background: #fff;
+        border: 1px dashed #d1d5db;
+        border-radius: 12px;
+    }
+
+        .empty-orders .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+    @@media (max-width: 600px) {
+        .order-card-header {
+            gap: 18px;
+        }
+
+        .order-actions, .order-actions .btn {
+            width: 100%;
+        }
+    }
+</style>

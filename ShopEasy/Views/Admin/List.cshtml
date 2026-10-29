@@ -1,0 +1,203 @@
+
+@model IEnumerable<ShopEasy.Models.SellerReg>
+
+<style>
+    .seller-container {
+        padding: 25px;
+        background: #f5f7fb;
+        min-height: 100vh;
+    }
+
+    .seller-heading {
+        margin-bottom: 25px;
+    }
+
+        .seller-heading h2 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #263449;
+            margin-bottom: 6px;
+        }
+
+        .seller-heading p {
+            color: #7b8798;
+            margin: 0;
+        }
+
+    .seller-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 3px 12px rgba(30, 50, 80, 0.06);
+        border: 1px solid #e8edf4;
+    }
+
+    .seller-table {
+        width: 100%;
+        margin-bottom: 0;
+        vertical-align: middle;
+    }
+
+        .seller-table thead th {
+            background: #f7f9fc;
+            color: #64748b;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            padding: 16px 12px;
+            white-space: nowrap;
+            border-bottom: 1px solid #e5eaf1;
+        }
+
+        .seller-table tbody td {
+            padding: 16px 12px;
+            color: #374151;
+            font-size: 14px;
+            border-bottom: 1px solid #edf0f5;
+        }
+
+        .seller-table tbody tr:hover {
+            background: #f8faff;
+        }
+
+        .seller-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    .accept-link {
+        display: inline-block;
+        padding: 7px 12px;
+        background: #e6f8ef;
+        color: #168653;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 12px;
+    }
+
+        .accept-link:hover {
+            background: #168653;
+            color: white;
+        }
+
+    .delete-link {
+        display: inline-block;
+        padding: 7px 12px;
+        background: #fdeaea;
+        color: #c03939;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 12px;
+    }
+
+        .delete-link:hover {
+            background: #c03939;
+            color: white;
+        }
+
+    .seller-id {
+        color: #285bd4;
+        font-weight: 600;
+    }
+
+    @@media (max-width: 768px) {
+        .seller-container {
+            padding: 15px;
+        }
+
+        .seller-card {
+            padding: 15px;
+        }
+    }
+</style>
+
+<div class="seller-container">
+
+    <div class="seller-heading">
+        <h2>View Sellers</h2>
+        <p>Manage registered sellers in ShopEasy.</p>
+    </div>
+
+    <div class="seller-card">
+
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <h5 class="fw-bold mb-0">Seller Details</h5>
+            <span class="badge bg-primary p-2">
+                Total Sellers: @Model.Count()
+            </span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table seller-table">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.SId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.CompanyName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.SellerLiscenceNo)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.SellerName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Email)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Contact)
+                        </th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <span class="seller-id">
+                                    @Html.DisplayFor(modelItem => item.SId)
+                                </span>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CompanyName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SellerLiscenceNo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SellerName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Email)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Contact)
+                            </td>
+                            <td class="text-nowrap">
+                                @Html.ActionLink(
+                                "Accept",
+                                                        "Accept",
+                                                        new { id = item.SId },
+                                                        new { @class = "accept-link" }
+                                                        )
+
+                            @Html.ActionLink(
+                                                        "Delete",
+                                                        "Delete",
+                                                        new { id = item.SId },
+                                                        new { @class = "delete-link" }
+                                                        )
+                        </td>
+                    </tr>
+                                        }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>

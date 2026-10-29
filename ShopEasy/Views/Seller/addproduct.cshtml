@@ -1,0 +1,297 @@
+
+@model ShopEasy.Models.ProductType
+
+@{
+    ViewData["Title"] = "Create Product";
+}
+
+<style>
+    body {
+        background: #f4f7fc;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #263449;
+    }
+
+    .product-page {
+        min-height: 100vh;
+        padding: 45px 20px;
+    }
+
+    .product-container {
+        max-width: 760px;
+        margin: 0 auto;
+        background: #ffffff;
+        border: 1px solid #e5eaf2;
+        border-radius: 16px;
+        padding: 35px 40px;
+        box-shadow: 0 8px 30px rgba(31, 48, 75, 0.07);
+    }
+
+    .page-header {
+        margin-bottom: 28px;
+    }
+
+        .page-header h2 {
+            font-size: 27px;
+            font-weight: 700;
+            color: #1e3558;
+            margin: 0 0 9px;
+        }
+
+        .page-header p {
+            color: #7b8799;
+            font-size: 14px;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+    .header-line {
+        border: 0;
+        border-top: 1px solid #e8edf4;
+        margin: 24px 0;
+    }
+
+    .form-group {
+        margin-bottom: 23px;
+    }
+
+    .control-label {
+        display: block;
+        color: #34445c;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 9px;
+    }
+
+    .form-control {
+        display: block;
+        width: 100%;
+        min-height: 45px;
+        padding: 11px 13px;
+        font-size: 14px;
+        color: #263449;
+        background-color: #fff;
+        border: 1px solid #d9e1ec;
+        border-radius: 8px;
+        box-sizing: border-box;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+        .form-control:focus {
+            border-color: #3976db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(57, 118, 219, 0.12);
+        }
+
+    select.form-control {
+        cursor: pointer;
+    }
+
+    input[type="file"].form-control {
+        padding: 8px;
+        background: #fafbfe;
+        cursor: pointer;
+    }
+
+    input[type="file"]::file-selector-button {
+        background: #eaf1ff;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 12px;
+        margin-right: 12px;
+        color: #285fc5;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .text-danger {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+    }
+
+    .validation-summary-errors {
+        background: #fff1f1;
+        color: #b42318;
+        border: 1px solid #ffd5d5;
+        border-radius: 8px;
+        padding: 12px 15px;
+        margin-bottom: 20px;
+        font-size: 13px;
+    }
+
+    .form-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+
+    .btn-create {
+        display: inline-block;
+        padding: 12px 27px;
+        background: #285fc5;
+        border: 1px solid #285fc5;
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.2s;
+    }
+
+        .btn-create:hover {
+            background: #1e4da5;
+            border-color: #1e4da5;
+            transform: translateY(-1px);
+        }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 26px;
+        color: #45658f;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .back-link:hover {
+            color: #285fc5;
+            text-decoration: underline;
+        }
+
+    @@media (max-width: 600px) {
+        .product-page {
+            padding: 20px 12px;
+        }
+
+        .product-container {
+            padding: 23px 18px;
+        }
+
+        .page-header h2 {
+            font-size: 23px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-create {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="product-page">
+
+    <div class="product-container">
+
+        <div class="page-header">
+            <h2>Create New Product</h2>
+            <p>
+                Add your product details below to make it available
+                in your ShopEasy store.
+            </p>
+        </div>
+
+        <hr class="header-line" />
+
+        <form asp-action="ManageProduct" enctype="multipart/form-data">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger">
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CategoryID" class="control-label">
+                    Product Category
+                </label>
+
+                <select asp-for="CategoryID"
+                        asp-items="@ViewBag.type"
+                        class="form-control">
+                    <option value="">-- Select Category --</option>
+                </select>
+
+                <span asp-validation-for="CategoryID"
+                      class="text-danger">
+                </span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ProductName" class="control-label">
+                    Product Name
+                </label>
+
+                <input asp-for="ProductName"
+                       class="form-control"
+                       placeholder="Enter product name" />
+
+                <span asp-validation-for="ProductName"
+                      class="text-danger">
+                </span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="control-label">
+                    Description
+                </label>
+
+                <input asp-for="Description"
+                       class="form-control"
+                       placeholder="Enter product description" />
+
+                <span asp-validation-for="Description"
+                      class="text-danger">
+                </span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Price" class="control-label">
+                    Price
+                </label>
+
+                <input asp-for="Price"
+                       class="form-control"
+                       placeholder="Enter product price" />
+
+                <span asp-validation-for="Price"
+                      class="text-danger">
+                </span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Image" class="control-label">
+                    Product Image
+                </label>
+
+                <input asp-for="Image"
+                       type="file"
+                       class="form-control"
+                       multiple />
+
+                <span asp-validation-for="Image"
+                      class="text-danger">
+                </span>
+            </div>
+
+            <div class="form-actions">
+                <input type="submit"
+                       value="Create Product"
+                       class="btn-create" />
+            </div>
+
+        </form>
+
+        <div>
+            <a asp-action="Index" class="back-link">
+                &larr; Back to List
+            </a>
+        </div>
+
+    </div>
+
+</div>

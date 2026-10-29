@@ -1,0 +1,466 @@
+﻿@{
+    ViewData["Title"] = "Order Details";
+}
+
+<style>
+    .order-details-page {
+        background: #f4f6f9;
+        min-height: 100vh;
+        padding: 35px 15px;
+    }
+
+    .order-card {
+        max-width: 850px;
+        margin: auto;
+        background: white;
+        border-radius: 14px;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    a
+    .order-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 18px;
+        margin-bottom: 25px;
+    }
+
+    .order-heading h2 {
+        margin: 0;
+        color: #243047;
+        font-size: 25px;
+    }
+
+    .order-id {
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .product-section {
+        display: flex;
+        gap: 25px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+    }
+
+    .product-image {
+        width: 190px;
+        height: 190px;
+        object-fit: contain;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 10px;
+        background: #fff;
+    }
+
+    .product-info {
+        flex: 1;
+        min-width: 220px;
+    }
+
+        .product-info h3 {
+            color: #243047;
+            margin-bottom: 15px;
+        }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 12px 0;
+        border-bottom: 1px solid #edf0f4;
+    }
+
+    .detail-label {
+        color: #64748b;
+    }
+
+    .detail-value {
+        color: #243047;
+        font-weight: 600;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    .section-title {
+        color: #243047;
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+
+    .address-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 9px;
+        padding: 18px;
+        margin-top: 25px;
+    }
+
+    .total-row {
+        font-size: 18px;
+        color: #16794b;
+    }
+
+    .back-button {
+        display: inline-block;
+        margin-top: 25px;
+        background: #243047;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 7px;
+        text-decoration: none;
+    }
+
+        .back-button:hover {
+            background: #374b69;
+            color: white;
+        }
+
+    /* Feedback section */
+
+    .feedback-box {
+        margin-top: 30px;
+        padding: 22px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+    }
+
+        .feedback-box h4 {
+            color: #243047;
+            margin-bottom: 10px;
+        }
+
+    .feedback-description {
+        color: #64748b;
+        margin-bottom: 12px;
+    }
+
+    .star-rating {
+        display: flex;
+        gap: 8px;
+        margin: 12px 0;
+    }
+
+        .star-rating span {
+            font-size: 35px;
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+            line-height: 1.2;
+        }
+
+            .star-rating span.active {
+                color: #f59e0b;
+            }
+
+            .star-rating span:hover {
+                transform: scale(1.1);
+            }
+
+        .star-rating.readonly span {
+            cursor: default;
+        }
+
+            .star-rating.readonly span:hover {
+                transform: none;
+            }
+
+    #rating-text {
+        color: #64748b;
+        margin-bottom: 18px;
+        min-height: 20px;
+    }
+
+    .feedback-label {
+        display: block;
+        color: #243047;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .feedback-textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        resize: vertical;
+        margin: 8px 0 15px;
+        font-family: inherit;
+        box-sizing: border-box;
+    }
+
+        .feedback-textarea:focus {
+            outline: none;
+            border-color: #64748b;
+            box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.15);
+        }
+
+    .feedback-button {
+        background: #243047;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+        .feedback-button:hover {
+            background: #374b69;
+        }
+
+    @@media (max-width: 576px) {
+        .order-card {
+            padding: 20px 15px;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 220px;
+        }
+
+        .product-section {
+            gap: 18px;
+        }
+
+        .feedback-box {
+            padding: 18px 14px;
+        }
+
+        .star-rating span {
+            font-size: 32px;
+        }
+    }
+</style>
+
+<div class="order-details-page">
+    <div class="order-card">
+
+        <!-- Order Heading -->
+        <div class="order-heading">
+            <h2>Order Details</h2>
+
+            <span class="order-id">
+                Order #@ViewBag.Order.Orderid
+            </span>
+        </div>
+
+        <!-- Product Information -->
+        <div class="product-section">
+
+            @{
+                string[] images = ViewBag.Order.Image != null
+                ? ViewBag.Order.Image.ToString().Split(',')
+                : Array.Empty<string>();
+
+                string firstImage = images.Length > 0
+                ? images[0].Trim()
+                : "";
+            }
+
+            @if (!string.IsNullOrWhiteSpace(firstImage))
+            {
+                <img class="product-image"
+                     src="@Url.Content("~/Products/" + firstImage)"
+                     alt="@ViewBag.Order.Productname" />
+            }
+            else
+            {
+                <div class="product-image d-flex align-items-center justify-content-center">
+                    <span class="text-muted">No image available</span>
+                </div>
+            }
+
+            <div class="product-info">
+
+                <h3>@ViewBag.Order.Productname</h3>
+
+                <div class="detail-row">
+                    <span class="detail-label">Unit Price</span>
+                    <span class="detail-value">
+                        ₹@(((decimal)ViewBag.Order.Productprice).ToString("N2"))
+                    </span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Quantity × Product Price</span>
+                    <span class="detail-value">
+                        @ViewBag.Order.Quantity ×
+                        ₹@(((decimal)ViewBag.Order.Productprice).ToString("N2"))
+                    </span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Order Date</span>
+                    <span class="detail-value">
+                        @ViewBag.Order.Orderdate
+                    </span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value">
+                        @if ((int)ViewBag.Order.Status == 0)
+                        {
+                            <span class="text-warning">Pending</span>
+                        }
+                        else
+                        {
+                            <span class="text-success">Processed</span>
+                        }
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Total Price -->
+        <div class="detail-row total-row">
+            <span>Total Price</span>
+
+            <span class="detail-value">
+                ₹@(((decimal)ViewBag.Order.Totalprice).ToString("N2"))
+            </span>
+        </div>
+
+        <!-- Delivery Address -->
+        <div class="address-box">
+            <h4 class="section-title">Delivery Address</h4>
+
+            <p class="mb-0">
+                @(ViewBag.Order.Address ?? "No delivery address available")
+            </p>
+        </div>
+
+        <!-- Rating and Feedback -->
+        @if ((int)ViewBag.Order.Status != 0)
+        {
+            int savedRating = (int)ViewBag.Rating;
+            string[] ratingLabels = { "Poor", "Fair", "Good", "Very Good", "Excellent" };
+
+            <div class="feedback-box">
+
+                @if (savedRating > 0)
+                {
+                    <!-- Feedback already submitted: read-only -->
+                    <h4>Your Rating</h4>
+
+                    <div class="star-rating readonly"
+                         role="img"
+                         aria-label="You rated this product @savedRating out of 5 stars">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <span class="@(i <= savedRating ? "active" : "")">★</span>
+                        }
+                    </div>
+
+                    <p id="rating-text">@ratingLabels[savedRating - 1] (@savedRating/5)</p>
+
+                    @if (!string.IsNullOrWhiteSpace((string)ViewBag.Comment))
+                    {
+                        <label class="feedback-label">Your Feedback</label>
+                        <p>@ViewBag.Comment</p>
+                    }
+                }
+                else
+                {
+                    <!-- No feedback yet: show the form -->
+                    <h4>Rate This Product</h4>
+                    <p class="feedback-description">How was your experience with this product?</p>
+
+                    <form asp-controller="Customer" asp-action="SubmitFeedback" method="post">
+
+                        <input type="hidden" name="Pid" value="@ViewBag.Order.Productid" />
+                        <input type="hidden" name="OrderId" value="@ViewBag.Order.Orderid" />
+                        <input type="hidden" id="Rating" name="Rating" value="0" />
+
+                        <div class="star-rating" role="group" aria-label="Select a rating from one to five stars">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <span data-rating="@i" role="button" tabindex="0"
+                                      aria-label="@i star@(i > 1 ? "s" : "")">★</span>
+                            }
+                        </div>
+
+                        <p id="rating-text" aria-live="polite">Select your rating</p>
+
+                        <label for="Comment" class="feedback-label">Your Feedback</label>
+                        <textarea id="Comment" name="Comment" class="feedback-textarea"
+                          rows="4" maxlength="500" required
+                          placeholder="Share your experience with this product..."></textarea>
+
+                        <button type="submit" class="feedback-button">Submit Feedback</button>
+                    </form>
+                }
+            </div>
+        }
+
+        <!-- Back Button -->
+        <a asp-controller="Customer"
+           asp-action="MyOrders"
+           class="back-button">
+            &larr; Back to My Orders
+        </a>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const feedbackForm = document.querySelector(".feedback-box form");
+        if (!feedbackForm) return;   // feedback already submitted or order not processed
+
+        const stars = feedbackForm.querySelectorAll(".star-rating span");
+        const ratingInput = document.getElementById("Rating");
+        const ratingText = document.getElementById("rating-text");
+
+        const ratingLabels = ["Poor", "Fair", "Good", "Very Good", "Excellent"];
+
+        function selectRating(rating) {
+            ratingInput.value = rating;
+
+            stars.forEach(function (star) {
+                const starRating = Number(star.dataset.rating);
+                star.classList.toggle("active", starRating <= rating);
+                star.setAttribute("aria-pressed", starRating === rating ? "true" : "false");
+            });
+
+            ratingText.textContent = ratingLabels[rating - 1];
+        }
+
+        stars.forEach(function (star) {
+            star.addEventListener("click", function () {
+                selectRating(Number(this.dataset.rating));
+            });
+
+            star.addEventListener("keydown", function (event) {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    selectRating(Number(this.dataset.rating));
+                }
+            });
+        });
+
+        feedbackForm.addEventListener("submit", function (event) {
+            if (Number(ratingInput.value) < 1 || Number(ratingInput.value) > 5) {
+                event.preventDefault();
+                alert("Please select a star rating.");
+                return;
+            }
+
+            const comment = document.getElementById("Comment").value.trim();
+            if (comment.length === 0) {
+                event.preventDefault();
+                alert("Please enter your feedback.");
+            }
+        });
+    });
+</script>

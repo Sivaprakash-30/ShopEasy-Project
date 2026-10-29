@@ -1,0 +1,326 @@
+﻿@model ShopEasy.Models.ProductType
+@{
+	var reviews = ViewBag.Rating as List<Feedback> ?? new List<Feedback>();
+	int totalReviews = reviews.Count;
+	double average = totalReviews > 0 ? reviews.Average(r => r.Rating) : 0;
+	int roundedAverage = (int)Math.Round(average);
+}
+
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+
+<!-- Bootstrap -->
+<link type="text/css" rel="stylesheet" href="~/Index/css/bootstrap.min.css" />
+
+<!-- Slick -->
+<link type="text/css" rel="stylesheet" href="~/Index/css/slick.css" />
+<link type="text/css" rel="stylesheet" href="~/Index/css/slick-theme.css" />
+
+<!-- nouislider -->
+<link type="text/css" rel="stylesheet" href="~/Index/css/nouislider.min.css" />
+
+<!-- Font Awesome Icon -->
+<link rel="stylesheet" href="~/Index/css/font-awesome.min.css">
+
+<!-- Custom stlylesheet -->
+<link type="text/css" rel="stylesheet" href="~/Index/css/style.css" />
+<style>
+	.reviews-section {
+		max-width: 850px;
+		margin: 30px auto;
+		background: #fff;
+		border-radius: 14px;
+		padding: 28px;
+		box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+	}
+
+		.reviews-section h2 {
+			color: #243047;
+			font-size: 22px;
+			margin-bottom: 18px;
+		}
+
+	.review-summary {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		padding: 16px 18px;
+		background: #f8fafc;
+		border: 1px solid #e2e8f0;
+		border-radius: 10px;
+		margin-bottom: 22px;
+	}
+
+	.review-average {
+		font-size: 38px;
+		font-weight: 700;
+		color: #243047;
+		line-height: 1;
+	}
+
+	.review-count {
+		color: #64748b;
+		font-size: 14px;
+	}
+
+	.stars {
+		display: inline-flex;
+		gap: 2px;
+		font-size: 20px;
+		line-height: 1;
+	}
+
+		.stars .star {
+			color: #cbd5e1;
+		}
+
+			.stars .star.filled {
+				color: #f59e0b;
+			}
+
+	.stars-lg {
+		font-size: 26px;
+	}
+
+	.review-card {
+		display: flex;
+		gap: 14px;
+		padding: 18px 0;
+		border-bottom: 1px solid #edf0f4;
+	}
+
+		.review-card:last-child {
+			border-bottom: none;
+		}
+
+	.review-avatar {
+		flex: 0 0 44px;
+		width: 44px;
+		height: 44px;
+		border-radius: 50%;
+		background: #243047;
+		color: #fff;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: 600;
+		font-size: 18px;
+		text-transform: uppercase;
+	}
+
+	.review-body {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.review-user {
+		font-weight: 600;
+		color: #243047;
+		margin-bottom: 2px;
+	}
+
+	.review-text {
+		color: #475569;
+		margin: 6px 0 0;
+		overflow-wrap: anywhere;
+	}
+
+	.no-reviews {
+		text-align: center;
+		color: #64748b;
+		padding: 30px 10px;
+	}
+</style>
+<div class="section">
+	<!-- container -->
+	<div class="container">
+		<!-- row -->
+		<div class="row">
+			<!-- Product main img -->
+			<div class="col-md-5 col-md-push-2">
+				<div id="product-main-img">
+
+					@{
+						var img = Model.ImagePath;
+						string[] ar = img.Split(',');
+					}
+
+					@foreach (var item in ar)
+					{
+						<div class="product-preview">
+							<img src="@Url.Content("~/Products/" + item)" alt="">
+						</div>
+					}
+
+
+				</div>
+			</div>
+			<!-- /Product main img -->
+			<!-- Product thumb imgs -->
+			<div class="col-md-2  col-md-pull-5">
+				<div id="product-imgs">
+
+					@{
+						var img1 = Model.ImagePath;
+						string[] ar1 = img1.Split(',');
+					}
+
+					@foreach (var item in ar1)
+					{
+						<div class="product-preview">
+							<img src="@Url.Content("~/Products/"+item)" alt="">
+						</div>
+					}
+
+
+					
+
+					
+				</div>
+			</div>
+			<!-- /Product thumb imgs -->
+			<!-- Product details -->
+			<div class="col-md-5">
+				<div class="product-details">
+					<h2 class="product-name">@Model.ProductName</h2>
+					<div>
+						<div class="product-rating">
+							<div class="">
+								 
+								<div>
+									<div class="stars stars-lg" aria-label="Average rating @average.ToString("0.0") out of 5">
+										@for (int i = 1; i <= 5; i++)
+										{
+											<span class="star @(i <= roundedAverage ? "filled" : "")">★</span>
+										}
+									</div>
+									
+								</div>
+							</div>
+						</div>
+						<a class="review-link" href="#"> @ViewBag.Count Review(s) </a>
+					</div>
+					<div>
+						<h3 class="product-price">@Model.Price <del class="product-old-price"></del></h3>
+
+						@{
+							if(ViewBag.msg == "1")
+
+							{
+								<span class="product-available" style="color:green">	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;Stock</span>
+							}
+							else
+							{
+							<span class="product-available" style="color:red">	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp; Out of Stock</span>	
+							}	
+						}
+
+						 
+					</div>
+					<p>@Model.Description</p>
+
+					
+				 @{
+
+						if(ViewBag.Message=="0")
+						 {
+
+					<div class="add-to-cart">
+						
+						<a class="add-to-cart-btn" asp-action="AddToCart"  asp-route-id="@Model.pid"><i class="fa fa-shopping-cart"></i> add to cart</a>
+				</div>
+						}
+						else
+						{
+
+							<div class="add-to-cart">
+
+								<Label class="add-to-cart-btn" ><i class="fa fa-shopping-cart"></i> Already in Cart</Label>
+							</div>
+							
+						}
+
+				}
+
+				
+
+					<ul class="product-links">
+						<li>Share:</li>
+						<li><a href="#"><i class="fa fa-facebook"></i></a></li>
+						<li><a href="#"><i class="fa fa-twitter"></i></a></li>
+						<li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+						<li><a href="#"><i class="fa fa-envelope"></i></a></li>
+					</ul>
+                   
+				</div>
+			</div>
+			 
+		</div>
+		<!-- /row -->
+
+		<div class="reviews-section">
+			<h2>Customer Reviews</h2>
+
+			@if (totalReviews == 0)
+			{
+				<div class="no-reviews">
+					<div style="font-size:38px;">&#128172;</div>
+					<p class="mb-0">No reviews yet for this product.</p>
+				</div>
+			}
+			else
+			{
+				<!-- Summary -->
+				<div class="review-summary">
+					<div class="review-average">@average.ToString("0.0")</div>
+					<div>
+						<div class="stars stars-lg" aria-label="Average rating @average.ToString("0.0") out of 5">
+							@for (int i = 1; i <= 5; i++)
+							{
+								<span class="star @(i <= roundedAverage ? "filled" : "")">★</span>
+							}
+						</div>
+						<div class="review-count">
+							Based on @totalReviews @(totalReviews == 1 ? "review" : "reviews")
+						</div>
+					</div>
+				</div>
+
+				<!-- Individual reviews -->
+				@foreach (var item in reviews)
+				{
+					string userName = item.Customer?.UserName ?? "Anonymous";
+					string initial = userName.Substring(0, 1);
+
+					<div class="review-card">
+						<div class="review-avatar">@initial</div>
+
+						<div class="review-body">
+							<div class="review-user">@userName</div>
+
+							<div class="stars" aria-label="@item.Rating out of 5 stars">
+								@for (int i = 1; i <= 5; i++)
+								{
+									<span class="star @(i <= item.Rating ? "filled" : "")">★</span>
+								}
+							</div>
+
+							@if (!string.IsNullOrWhiteSpace(item.feedback))
+							{
+								<p class="review-text">@item.feedback</p>
+							}
+						</div>
+					</div>
+				}
+			}
+		</div>
+	</div>
+	<!-- /container -->
+</div>
+<!-- /SECTION -->
+<script src="~/Index/js/jquery.min.js"></script>
+<script src="~/Index/js/bootstrap.min.js"></script>
+<script src="~/Index/js/slick.min.js"></script>
+<script src="~/Index/js/nouislider.min.js"></script>
+<script src="~/Index/js/jquery.zoom.min.js"></script>
+<script src="~/Index/js/main.js"></script>
+

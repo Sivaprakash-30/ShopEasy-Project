@@ -1,0 +1,408 @@
+
+@model ShopEasy.Models.ProductType
+
+@{
+    ViewData["Title"] = "Add Product";
+}
+
+<style>
+    .product-page {
+        background: #f5f7fb;
+        min-height: 100vh;
+        padding: 25px;
+    }
+
+    .product-heading {
+        margin-bottom: 25px;
+    }
+
+        .product-heading h2 {
+            color: #253047;
+            font-size: 27px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .product-heading p {
+            color: #8490a3;
+            font-size: 14px;
+            margin: 0;
+        }
+
+    .product-card {
+        background: #fff;
+        border: 1px solid #e8ecf3;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 18px rgba(31, 45, 61, .04);
+        height: 100%;
+    }
+
+    .section-heading {
+        font-size: 17px;
+        color: #253047;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .section-description {
+        color: #8992a4;
+        font-size: 13px;
+        margin-bottom: 22px;
+    }
+
+    .product-label {
+        display: block;
+        color: #3c465b;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .product-input {
+        width: 100%;
+        border: 1px solid #dce2eb;
+        border-radius: 7px;
+        padding: 11px 12px;
+        font-size: 14px;
+        color: #344054;
+        background: #fff;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+        .product-input:focus {
+            outline: none;
+            border-color: #3563e9;
+            box-shadow: 0 0 0 3px rgba(53, 99, 233, .12);
+        }
+
+    textarea.product-input {
+        resize: vertical;
+        min-height: 110px;
+    }
+
+    .field-validation {
+        display: block;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .upload-area {
+        border: 2px dashed #d6deed;
+        border-radius: 10px;
+        background: #f9faff;
+        padding: 25px 18px;
+        text-align: center;
+        transition: border-color .2s, background .2s;
+    }
+
+        .upload-area:hover {
+            border-color: #7895ed;
+            background: #f4f7ff;
+        }
+
+    .upload-icon {
+        font-size: 36px;
+        margin-bottom: 10px;
+    }
+
+    .upload-area h5 {
+        font-size: 15px;
+        font-weight: 700;
+        color: #344054;
+        margin-bottom: 7px;
+    }
+
+    .upload-area p {
+        font-size: 12px;
+        color: #8992a4;
+        margin-bottom: 15px;
+    }
+
+    .upload-input {
+        width: 100%;
+        font-size: 13px;
+        color: #667085;
+    }
+
+    .image-preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .preview-item {
+        border: 1px solid #e4e9f1;
+        border-radius: 8px;
+        padding: 5px;
+        background: #fff;
+        min-width: 0;
+    }
+
+        .preview-item img {
+            width: 100%;
+            height: 90px;
+            object-fit: contain;
+            border-radius: 5px;
+            background: #f7f8fb;
+        }
+
+    .preview-name {
+        display: block;
+        margin-top: 5px;
+        font-size: 11px;
+        color: #667085;
+        overflow-wrap: anywhere;
+    }
+
+    .product-divider {
+        border: 0;
+        border-top: 1px solid #edf0f5;
+        margin: 22px 0;
+    }
+
+    .btn-create {
+        background: #3563e9;
+        border: 1px solid #3563e9;
+        border-radius: 7px;
+        color: #fff;
+        padding: 11px 22px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        .btn-create:hover {
+            background: #244fc9;
+            color: #fff;
+        }
+
+    .btn-cancel {
+        display: inline-block;
+        text-decoration: none;
+        border: 1px solid #dce2eb;
+        background: #fff;
+        color: #475467;
+        border-radius: 7px;
+        padding: 11px 18px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+        .btn-cancel:hover {
+            background: #f8f9fc;
+            color: #253047;
+        }
+
+    @@media (max-width: 767px) {
+        .product-page {
+            padding: 15px;
+        }
+
+        .product-card {
+            padding: 18px;
+        }
+    }
+</style>
+
+<div class="product-page">
+
+    <div class="product-heading">
+        <h2>Add New Product</h2>
+        <p>Add product details and images to your ShopEasy catalogue.</p>
+    </div>
+
+    <form asp-action="ManageProduct"
+          method="post"
+          enctype="multipart/form-data">
+
+        <div asp-validation-summary="ModelOnly"
+             class="text-danger mb-3"></div>
+
+        <div class="row g-4">
+
+            <!-- Product details -->
+            <div class="col-12 col-lg-7">
+                <div class="product-card">
+
+                    <h4 class="section-heading">Product Information</h4>
+                    <p class="section-description">
+                        Enter the basic information for your product.
+                    </p>
+
+                    <div class="mb-4">
+                        <label asp-for="CategoryID" class="product-label">
+                            Product Category
+                        </label>
+
+                        <select asp-for="CategoryID"
+                                asp-items="@ViewBag.data"
+                                class="product-input">
+                            <option value="">-- Select Category --</option>
+                        </select>
+
+                        <span asp-validation-for="CategoryID"
+                              class="text-danger field-validation"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="ProductName" class="product-label">
+                            Product Name
+                        </label>
+
+                        <input asp-for="ProductName"
+                               class="product-input"
+                               placeholder="e.g. Wireless Headphones" />
+
+                        <span asp-validation-for="ProductName"
+                              class="text-danger field-validation"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Description" class="product-label">
+                            Product Description
+                        </label>
+
+                        <textarea asp-for="Description"
+                                  class="product-input"
+                                  rows="4"
+                                  placeholder="Describe the product features and details..."></textarea>
+
+                        <span asp-validation-for="Description"
+                              class="text-danger field-validation"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Price" class="product-label">
+                            Price (?)
+                        </label>
+
+                        <input asp-for="Price"
+                               type="number"
+                               step="0.01"
+                               min="0"
+                               class="product-input"
+                               placeholder="e.g. 1499.00" />
+
+                        <span asp-validation-for="Price"
+                              class="text-danger field-validation"></span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Product images -->
+            <div class="col-12 col-lg-5">
+                <div class="product-card">
+
+                    <h4 class="section-heading">Product Images</h4>
+                    <p class="section-description">
+                        Upload one or more images of your product.
+                    </p>
+
+                    <div class="upload-area">
+                        <div class="upload-icon">??</div>
+
+                        <h5>Upload Product Images</h5>
+
+                        <p>
+                            Choose clear images of your product.
+                            Multiple images are supported.
+                        </p>
+
+                        <input asp-for="Image"
+                               type="file"
+                               class="upload-input"
+                               accept="image/*"
+                               multiple
+                               id="productImages" />
+
+                        <span asp-validation-for="Image"
+                              class="text-danger field-validation"></span>
+                    </div>
+
+                    <div id="imagePreview" class="image-preview-grid"></div>
+
+                    <hr class="product-divider" />
+
+                    <div style="background:#f7f9fc; border-radius:8px; padding:14px;">
+                        <div style="font-size:13px; font-weight:700; color:#344054; margin-bottom:7px;">
+                            Image upload tips
+                        </div>
+
+                        <ul style="font-size:12px; color:#7b8497; padding-left:18px; margin:0; line-height:1.9;">
+                            <li>Use clear, well-lit product images.</li>
+                            <li>Choose images that show the actual product.</li>
+                            <li>Preview your selected images before saving.</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Form actions -->
+        <div class="product-card mt-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <span style="font-size:12px; color:#8992a4;">
+                    Check the product details before creating the product.
+                </span>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <a asp-action="Index" class="btn-cancel">
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="btn-create">
+                        + Create Product
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    document.getElementById("productImages").addEventListener("change", function () {
+        const preview = document.getElementById("imagePreview");
+        preview.innerHTML = "";
+
+        const files = Array.from(this.files);
+
+        files.forEach(function (file) {
+            if (!file.type.startsWith("image/")) {
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                const item = document.createElement("div");
+                item.className = "preview-item";
+
+                const img = document.createElement("img");
+                img.src = event.target.result;
+                img.alt = file.name;
+
+                const name = document.createElement("span");
+                name.className = "preview-name";
+                name.textContent = file.name;
+
+                item.appendChild(img);
+                item.appendChild(name);
+                preview.appendChild(item);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    });
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

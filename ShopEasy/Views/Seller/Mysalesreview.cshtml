@@ -1,0 +1,256 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "My Sales Review";
+}
+
+<style>
+    .sales-page {
+        background: #f4f7fc;
+        min-height: 100vh;
+        padding: 30px;
+        border-radius: 15px;
+    }
+
+    .sales-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 28px;
+    }
+
+        .sales-header h2 {
+            color: #172b4d;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .sales-header p {
+            color: #77849a;
+            margin: 0;
+        }
+
+    .summary-card {
+        background: white;
+        padding: 18px 22px;
+        border-radius: 13px;
+        box-shadow: 0 4px 15px rgba(0,0,0,.05);
+        min-width: 150px;
+    }
+
+    .summary-label {
+        color: #7b8798;
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+
+    .summary-value {
+        color: #2563eb;
+        font-size: 25px;
+        font-weight: 700;
+    }
+
+    .product-card {
+        background: white;
+        height: 100%;
+        border: 1px solid #e8edf5;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 5px 18px rgba(30,50,80,.05);
+        transition: transform .2s, box-shadow .2s;
+    }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(30,50,80,.12);
+        }
+
+    .product-image {
+        width: 100%;
+        height: 220px;
+        object-fit: contain;
+        padding: 16px;
+        background: #f8fafc;
+    }
+
+    .product-content {
+        padding: 20px;
+    }
+
+    .product-id {
+        color: #2563eb;
+        background: #eff6ff;
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        margin-bottom: 12px;
+    }
+
+    .product-name {
+        color: #172b4d;
+        font-size: 19px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        overflow-wrap: anywhere;
+    }
+
+    .product-price {
+        color: #172b4d;
+        font-size: 23px;
+        font-weight: 700;
+        margin-bottom: 18px;
+    }
+
+    .sales-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 14px;
+        border-radius: 10px;
+        background: #ecfdf5;
+        color: #087443;
+        margin-bottom: 15px;
+    }
+
+        .sales-info span {
+            font-size: 13px;
+        }
+
+        .sales-info strong {
+            font-size: 20px;
+        }
+
+    .sales-footer {
+        border-top: 1px solid #edf0f5;
+        padding-top: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #718096;
+        font-size: 13px;
+    }
+
+    .sales-status {
+        background: #ecfdf5;
+        color: #087443;
+        padding: 5px 9px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .empty-sales {
+        background: white;
+        border-radius: 16px;
+        padding: 55px 20px;
+        text-align: center;
+        color: #77849a;
+    }
+
+        .empty-sales h4 {
+            color: #172b4d;
+            margin: 14px 0 8px;
+        }
+
+    @@media (max-width: 576px) {
+        .sales-page {
+            padding: 15px;
+        }
+
+        .product-image {
+            height: 190px;
+        }
+    }
+</style>
+
+<div class="sales-page">
+
+    <div class="sales-header">
+        <div>
+            <h2>📊 My Sales Review</h2>
+            <p>Monitor your products and track their sales performance.</p>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-label">My Products</div>
+            <div class="summary-value">
+                @(Model?.Count() ?? 0)
+            </div>
+        </div>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row g-4">
+
+            @foreach (var item in Model)
+            {
+                string path = item.Image ?? "";
+                string fileName = path.Split(',')
+                .FirstOrDefault()?.Trim() ?? "";
+
+                <div class="col-12 col-sm-6 col-xl-4">
+
+                    <div class="product-card">
+
+                        @if (!string.IsNullOrEmpty(fileName))
+                        {
+                            <img src="@Url.Content("~/Products/" + fileName)"
+                                 class="product-image"
+                                 alt="@item.productname" />
+                        }
+                        else
+                        {
+                            <div class="product-image d-flex justify-content-center align-items-center">
+                                <span class="text-muted">No image available</span>
+                            </div>
+                        }
+
+                        <div class="product-content">
+
+                            <span class="product-id">
+                                Product #@item.pid
+                            </span>
+
+                            <div class="product-name">
+                                @item.productname
+                            </div>
+
+                            <div class="product-price">
+                                ₹@item.Price
+                            </div>
+
+                            <div class="sales-info">
+                                <span>🛒 Total Quantity Sold</span>
+                                <strong>@item.Quantity</strong>
+                            </div>
+
+                            <div class="sales-footer">
+                                <span>Sales performance</span>
+                                <span class="sales-status">
+                                    @(item.Quantity > 0 ? "Selling" : "No Sales Yet")
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+    else
+    {
+        <div class="empty-sales">
+            <div style="font-size: 48px;">📦</div>
+            <h4>No Sales Records Yet</h4>
+            <p>Your product sales will appear here when orders are recorded.</p>
+        </div>
+    }
+
+</div>

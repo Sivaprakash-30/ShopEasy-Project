@@ -1,0 +1,427 @@
+﻿@model List<ShopEasy.Models.ProductType>
+
+@{
+    ViewData["Title"] = "My Cart";
+}
+
+<div class="cp">
+
+    <!-- Banner -->
+    <section class="cp-banner">
+        <div>
+            <h2>My Cart</h2>
+            <p>
+                @if (Model.Count == 0)
+                {
+                    <text>Add something you like and it will wait for you here.</text>
+                }
+                else
+                {
+                    <text>You have @Model.Count @(Model.Count == 1 ? "item" : "items") in your cart.</text>
+                }
+            </p>
+        </div>
+        <div class="cp-banner-icon">&#128722;</div>
+    </section>
+
+    @if (Model.Count == 0)
+    {
+        <div class="cp-empty">
+            <div class="cp-empty-icon">&#128722;</div>
+            <h3>Your cart is empty</h3>
+            <p>Browse the products and add what you need.</p>
+            <a asp-controller="Customer" asp-action="Index" class="cp-btn cp-btn-main">Start shopping</a>
+        </div>
+    }
+    else
+    {
+        <div class="cp-list">
+            @foreach (var item in Model)
+            {
+                var img = item.ImagePath ?? "";
+                string[] ar = img.Split(',');
+
+                <article class="cp-row">
+
+                    <div class="cp-photo">
+                        <img src="@Url.Content("~/Products/" + ar[0])"
+                             alt="@item.ProductName"
+                             loading="lazy" />
+@* 
+                        @if (item.wishlist==null)
+                        {
+
+                        <button type="button">
+                            <a asp-controller="Customer"
+                               asp-action="WishList"
+                               asp-route-id="@item.pid"
+                               title="Add to wishlist"
+                               aria-label="Add to wishlist">
+                                &#9825;
+                            </a>
+
+                        </button>
+                        }
+                        else
+                        {
+                        <button type="button">
+                            <a asp-controller="Customer"
+                               asp-action="WishList"
+                               asp-route-id="@item.pid"
+                               title="Remove from wishlist"
+                               aria-label="Remove from wishlist">
+                                &#10084;
+                            </a>
+                        </button>
+                        } *@
+
+                        @{
+                            var isWishlisted = item.wishlist != null;
+                        }
+
+                        <a asp-controller="Customer"
+                           asp-action="WishList"
+                           asp-route-id="@item.pid"
+                           class="cp-wish @(isWishlisted ? "active" : "")"
+                           title="@(isWishlisted ? "Remove from wishlist" : "Save to wishlist")"
+                           aria-label="@(isWishlisted ? "Remove " + item.ProductName + " from wishlist" : "Save " + item.ProductName + " to wishlist")"
+                           aria-pressed="@(isWishlisted ? "true" : "false")">
+                            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="cp-info">
+                        <h3>@item.ProductName</h3>
+                        <p>@item.Description</p>
+                    </div>
+
+                    <div class="cp-buy">
+                        <div class="cp-price">&#8377;@item.Price</div>
+
+                        <a asp-action="Buynow"
+                           asp-route-id="@item.pid"
+                           class="cp-btn cp-btn-main cp-buynow">
+                            Buy now
+                        </a>
+
+                        <a asp-action="Removefromcart"
+                           asp-route-id="@item.pid"
+                           class="cp-remove">
+                            Remove from cart
+                        </a>
+                    </div>
+
+                </article>
+
+            }
+        </div>
+    }
+
+</div>
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+
+    .cp-wish svg {
+        fill: none;
+        stroke: var(--rose);
+        stroke-width: 2;
+        transition: fill .15s ease;
+    }
+
+    .cp-wish:hover svg,
+    .cp-wish.active svg {
+        fill: var(--rose);
+    }
+    .cp {
+        --ink: #1e1b4b;
+        --brand: var(--brand-dark, #4338ca);
+        --indigo: #4338ca;
+        --tint: #eef2ff;
+        --amber: #fbbf24;
+        --amber-ink: #78350f;
+        --muted: #6b7280;
+        --rose: #e11d48;
+        font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 24px 16px 56px;
+        color: var(--ink);
+    }
+
+    /* Banner */
+    .cp-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 28px 32px;
+        margin-bottom: 28px;
+        border-radius: 22px;
+        background: var(--brand);
+        color: #fff;
+    }
+
+        .cp-banner h2 {
+            margin: 0 0 4px;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .cp-banner p {
+            margin: 0;
+            opacity: .9;
+        }
+
+    .cp-banner-icon {
+        font-size: 56px;
+        line-height: 1;
+    }
+
+    /* Rows */
+    .cp-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .cp-row {
+        display: grid;
+        grid-template-columns: 140px 1fr auto;
+        align-items: center;
+        gap: 24px;
+        padding: 16px;
+        background: var(--tint);
+        border-radius: 20px;
+        border: 2px solid transparent;
+        transition: border-color .2s ease, background .2s ease;
+    }
+
+        .cp-row:hover {
+            border-color: var(--indigo);
+            background: #fff;
+        }
+
+    /* Photo (positioning parent for the wishlist heart) */
+    .cp-photo {
+        position: relative;
+        width: 140px;
+        height: 140px;
+    }
+
+        .cp-photo img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 16px;
+            background: #fff;
+        }
+
+    /* Wishlist heart */
+    .cp-wish {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        display: grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 0 2px 8px rgba(30, 27, 75, .18);
+        transition: transform .15s ease;
+    }
+
+        .cp-wish svg {
+            fill: none;
+            stroke: var(--rose);
+            stroke-width: 2;
+            transition: fill .15s ease;
+        }
+
+        .cp-wish:hover {
+            transform: scale(1.1);
+        }
+
+            .cp-wish:hover svg,
+            .cp-wish.active svg {
+                fill: var(--rose);
+            }
+
+        .cp-wish:focus-visible {
+            outline: 3px solid rgba(225, 29, 72, .4);
+            outline-offset: 2px;
+        }
+
+    .cp-info h3 {
+        margin: 0 0 6px;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .cp-info p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 56ch;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Price + actions */
+    .cp-buy {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        min-width: 140px;
+        text-align: center;
+    }
+
+    .cp-price {
+        align-self: center;
+        padding: 3px 14px;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--amber-ink);
+        background: var(--amber);
+        border-radius: 999px;
+    }
+
+    .cp-buynow {
+        width: 100%;
+    }
+
+    /* Remove: quieter secondary action */
+    .cp-remove {
+        display: inline-block;
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--rose);
+        text-decoration: none;
+        border: 1px solid var(--rose);
+        border-radius: 999px;
+        transition: background .15s ease, color .15s ease;
+    }
+
+        .cp-remove:hover {
+            background: var(--rose);
+            color: #fff;
+        }
+
+    .cp-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 7px 16px;
+        font-size: 13.5px;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 999px;
+    }
+
+    .cp-btn-main {
+        background: var(--brand);
+        color: #fff;
+    }
+
+        .cp-btn-main:hover {
+            color: #fff;
+            filter: brightness(.9);
+        }
+
+    .cp-btn:focus-visible,
+    .cp-remove:focus-visible {
+        outline: 3px solid rgba(67, 56, 202, .45);
+        outline-offset: 2px;
+    }
+
+    /* Empty state */
+    .cp-empty {
+        text-align: center;
+        padding: 56px 16px;
+        background: var(--tint);
+        border-radius: 22px;
+    }
+
+    .cp-empty-icon {
+        font-size: 56px;
+        line-height: 1;
+        margin-bottom: 10px;
+    }
+
+    .cp-empty h3 {
+        margin: 0 0 6px;
+        font-weight: 600;
+    }
+
+    .cp-empty p {
+        margin: 0 0 20px;
+        color: var(--muted);
+    }
+
+    /* Mobile */
+    @@media (max-width: 680px) {
+        .cp-banner {
+            padding: 22px;
+        }
+
+            .cp-banner h2 {
+                font-size: 26px;
+            }
+
+        .cp-banner-icon {
+            font-size: 40px;
+        }
+
+        .cp-row {
+            grid-template-columns: 96px 1fr;
+            gap: 14px;
+        }
+
+        .cp-photo {
+            width: 96px;
+            height: 96px;
+        }
+
+        .cp-wish {
+            width: 28px;
+            height: 28px;
+            top: 5px;
+            right: 5px;
+        }
+
+            .cp-wish svg {
+                width: 16px;
+                height: 16px;
+            }
+
+        .cp-buy {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cp-buynow {
+            width: auto;
+        }
+
+        .cp-remove {
+            grid-column: 1 / -1;
+            text-align: center;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .cp-row, .cp-remove, .cp-wish, .cp-wish svg {
+            transition: none;
+        }
+    }
+</style>

@@ -1,0 +1,599 @@
+@model ShopEasy.Models.Stock
+
+@{
+    ViewData["Title"] = "Manage Stock";
+
+    var stocks = ViewData["stock"] as IEnumerable<ShopEasy.Models.Stock>
+                 ?? Enumerable.Empty<ShopEasy.Models.Stock>();
+}
+
+<style>
+    .stock-page {
+        background: #f5f7fb;
+        min-height: 100vh;
+        padding: 25px;
+        color: #263247;
+    }
+
+    .page-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+        .page-heading h2 {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0 0 6px;
+        }
+
+        .page-heading p {
+            color: #778195;
+            margin: 0;
+        }
+
+    .stock-card {
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 12px;
+        padding: 22px;
+        height: 100%;
+        box-shadow: 0 3px 12px rgba(30, 50, 80, .04);
+    }
+
+    .summary-label {
+        color: #778195;
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+
+    .summary-number {
+        font-size: 27px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .summary-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+    }
+
+    .icon-blue {
+        background: #e9f1ff;
+        color: #2864d7;
+    }
+
+    .icon-green {
+        background: #e6f8ef;
+        color: #168653;
+    }
+
+    .icon-orange {
+        background: #fff2df;
+        color: #d98212;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .section-subtitle {
+        color: #8490a3;
+        font-size: 13px;
+        margin-bottom: 22px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        min-height: 43px;
+        border-radius: 7px;
+        border-color: #dfe5ee;
+        box-shadow: none;
+    }
+
+        .form-control:focus {
+            border-color: #527de5;
+            box-shadow: 0 0 0 3px rgba(82, 125, 229, .10);
+        }
+
+    .btn-save-stock {
+        background: #285bd4;
+        color: white;
+        border: none;
+        border-radius: 7px;
+        padding: 11px 20px;
+        font-weight: 600;
+    }
+
+        .btn-save-stock:hover {
+            background: #1949b7;
+            color: white;
+        }
+
+    .table-search {
+        max-width: 260px;
+    }
+
+    /* Entire Stock Details card */
+    .stock-details-card {
+        height: 600px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    /* Heading and search stay fixed */
+    .stock-details-header {
+        flex: 0 0 auto;
+    }
+
+    /* Scrollbar is inside the Stock Details column */
+    .stock-details-body {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: scroll;
+        overflow-x: auto;
+        border: 1px solid #e8edf4;
+        border-radius: 8px;
+        scrollbar-width: thin;
+        scrollbar-color: #aab7ca #f1f4f8;
+    }
+
+        .stock-details-body::-webkit-scrollbar {
+            width: 9px;
+            height: 8px;
+        }
+
+        .stock-details-body::-webkit-scrollbar-track {
+            background: #f1f4f8;
+            border-radius: 10px;
+        }
+
+        .stock-details-body::-webkit-scrollbar-thumb {
+            background: #aab7ca;
+            border-radius: 10px;
+        }
+
+            .stock-details-body::-webkit-scrollbar-thumb:hover {
+                background: #8293ad;
+            }
+
+    .stock-table {
+        width: 100%;
+        margin-bottom: 0;
+        vertical-align: middle;
+    }
+
+        .stock-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: #f7f9fc;
+            color: #68758a;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            padding: 15px 12px;
+            border-bottom: 1px solid #e7ecf3;
+            white-space: nowrap;
+        }
+
+        .stock-table tbody td {
+            padding: 12px;
+            border-color: #edf0f5;
+            font-size: 14px;
+        }
+
+        .stock-table tbody tr:hover {
+            background: #f9fbff;
+        }
+
+    .stock-badge {
+        display: inline-block;
+        border-radius: 20px;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .stock-available {
+        color: #168653;
+        background: #e6f8ef;
+    }
+
+    .stock-low {
+        color: #b56b08;
+        background: #fff2df;
+    }
+
+    .stock-empty {
+        color: #c03939;
+        background: #fdeaea;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 35px 15px !important;
+        color: #8490a3;
+    }
+
+    .stock-count {
+        font-size: 12px;
+        color: #778195;
+    }
+
+    @@media (max-width: 767px) {
+        .stock-page {
+            padding: 15px;
+        }
+
+        .stock-card {
+            padding: 17px;
+        }
+
+        .page-heading h2 {
+            font-size: 22px;
+        }
+
+        .table-search {
+            max-width: 100%;
+            width: 100%;
+        }
+
+        .stock-details-card {
+            height: 600px;
+        }
+    }
+</style>
+
+<div class="stock-page">
+
+    <!-- Page heading -->
+    <div class="page-heading">
+        <div>
+            
+            <h2>Manage product stock levels and monitor inventory updates.</h2>
+        </div>
+
+        <span class="badge bg-primary p-2">ShopEasy Admin</span>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <div class="stock-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="summary-label">Products Tracked</div>
+                        <p class="summary-number">
+                            @stocks.Select(s => s.Pid).Distinct().Count()
+                        </p>
+                    </div>
+                    <div class="summary-icon icon-blue">&#128230;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="stock-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="summary-label">Total Units in Stock</div>
+                        <p class="summary-number">
+                            @stocks.Sum(s => s.Quantity)
+                        </p>
+                    </div>
+                    <div class="summary-icon icon-green">&#128722;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="stock-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="summary-label">Low / Out of Stock Records</div>
+                        <p class="summary-number">
+                            @stocks.Count(s => s.Quantity <= 5)
+                        </p>
+                    </div>
+                    <div class="summary-icon icon-orange">&#9888;</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Add stock form -->
+        <div class="col-lg-4">
+            <div class="stock-card">
+
+                <h5 class="section-title">Add Stock</h5>
+                <p class="section-subtitle">
+                    Select a category and product, then enter the stock quantity.
+                </p>
+
+                <form asp-action="Store" method="post">
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="Category">
+                            Product Category
+                        </label>
+
+                        <select class="form-control" id="Category">
+                            <option value="">Select category</option>
+
+                            @foreach (var item in ViewBag.categories)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Pid" class="form-label">
+                            Product
+                        </label>
+
+                        <select asp-for="Pid"
+                                class="form-control"
+                                id="Product">
+                            <option value="">Select product</option>
+                        </select>
+
+                        <span asp-validation-for="Pid"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Quantity" class="form-label">
+                            Stock Quantity
+                        </label>
+
+                        <input asp-for="Quantity"
+                               type="number"
+                               min="1"
+                               class="form-control"
+                               placeholder="Enter quantity" />
+
+                        <span asp-validation-for="Quantity"
+                              class="text-danger"></span>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-save-stock w-100">
+                        &#43; Save Stock
+                    </button>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- Stock Details column -->
+        <div class="col-lg-8">
+            <div class="stock-card stock-details-card">
+
+                <!-- Fixed heading and search -->
+                <div class="stock-details-header mb-3">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div>
+                            <h5 class="section-title">Stock Details</h5>
+                            <p class="section-subtitle mb-0">
+                                Current inventory and last update information.
+                            </p>
+                        </div>
+
+                        <input type="text"
+                               id="stockSearch"
+                               class="form-control table-search"
+                               placeholder="Search product..." />
+                    </div>
+                </div>
+
+                <!-- Scroll inside this column to view products -->
+                <div class="stock-details-body">
+                    <table class="table stock-table" id="stockTable">
+
+                        <thead>
+                            <tr>
+                                <th>Product Image</th>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Stock Status</th>
+                                <th>Last Updated</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if (stocks.Any())
+                            {
+                                @foreach (var item in stocks)
+                                {
+                                    <tr>
+                                        <td>
+                                            @{
+                                                var imageName = item.ProductType?.ImagePath?
+                                                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                                .FirstOrDefault()?.Trim();
+                                            }
+
+                                            @if (!string.IsNullOrWhiteSpace(imageName))
+                                            {
+                                                <img src="@Url.Content("~/Products/" + imageName)"
+                                                     alt="@item.ProductType?.ProductName"
+                                                     style="width:60px;height:60px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb;"
+                                                     onerror="this.style.display='none';" />
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">No image</span>
+                                            }
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            @(item.ProductType?.ProductName
+                                                                                    ?? "Product unavailable")
+                                    </strong>
+                                </td>
+
+                                        <td>
+                                            <strong>@item.Quantity</strong>
+                                        </td>
+
+                                        <td>
+                                    @if (item.Quantity <= 0)
+                                            {
+                                                <span class="stock-badge stock-empty">
+                                                    Out of Stock
+                                                </span>
+                                            }
+                                            else if (item.Quantity <= 5)
+                                            {
+                                                <span class="stock-badge stock-low">
+                                                    Low Stock
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="stock-badge stock-available">
+                                                    Available
+                                                </span>
+                                            }
+                                        </td>
+
+                                        <td>@item.Lastupdate</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="empty-state">
+                                        <div style="font-size:30px;">
+                                            &#128230;
+                                        </div>
+                                        <strong>No stock records found</strong>
+                                        <div>
+                                            Add stock using the form to see inventory here.
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <!-- Fixed count below the scrollable records -->
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <span class="stock-count">
+                        Showing <span id="visibleRows">0</span> stock records
+                    </span>
+                    <span class="stock-count">Scroll inside to view more ?</span>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const categoryDropdown = document.getElementById("Category");
+        const productDropdown = document.getElementById("Product");
+        const stockSearch = document.getElementById("stockSearch");
+        const stockTable = document.getElementById("stockTable");
+        const visibleRows = document.getElementById("visibleRows");
+        const stockDetailsBody =
+            document.querySelector(".stock-details-body");
+
+        // Load products when a category is selected
+        categoryDropdown.addEventListener("change", async function () {
+            const categoryId = this.value;
+
+            productDropdown.innerHTML =
+                '<option value="">Select product</option>';
+
+            if (!categoryId) {
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    '@Url.Action("GetProductsByCategory", "Admin")' +
+                    '?categoryId=' + encodeURIComponent(categoryId)
+                );
+
+                if (!response.ok) {
+                    throw new Error("Could not load products.");
+                }
+
+                const products = await response.json();
+
+                products.forEach(p => {
+                    const option = document.createElement("option");
+                    option.value = p.id;
+                    option.textContent = p.name;
+                    productDropdown.appendChild(option);
+                });
+            }
+            catch (error) {
+                console.error("Failed to load products:", error);
+                alert("Unable to load products. Please try again.");
+            }
+        });
+
+        // Search stock records
+        function updateVisibleRows() {
+            const searchText = stockSearch.value.toLowerCase().trim();
+            const rows = stockTable.querySelectorAll("tbody tr");
+            let count = 0;
+
+            rows.forEach(row => {
+                const isDataRow = row.cells.length === 5;
+                const matches =
+                    row.textContent.toLowerCase().includes(searchText);
+
+                row.style.display = matches ? "" : "none";
+
+                if (isDataRow && matches) {
+                    count++;
+                }
+            });
+
+            visibleRows.textContent = count;
+
+            // Start from the top after searching
+            stockDetailsBody.scrollTop = 0;
+        }
+
+        stockSearch.addEventListener("input", updateVisibleRows);
+        updateVisibleRows();
+    </script>
+}
